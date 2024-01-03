@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "lmrbcompat",
+  "version": "${version}",
+  "name": "LMRBCompat",
+  "description": "",
+  "authors": [
+    "Sistr"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.sistr.lmrbcompat.fabric.LMRBCompatFabric"
+    ],
+    "client": [
+      "net.sistr.lmrbcompat.fabric.LMRBCompatFabric"
+    ]
+  },
+  "mixins": [
+    "lmrbcompat.mixins.json",
+    "lmrbcompat-common.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.3",
+    "minecraft": ">=1.20.1"
+  }
+}
