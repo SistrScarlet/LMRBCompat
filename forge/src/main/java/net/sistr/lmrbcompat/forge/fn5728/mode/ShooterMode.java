@@ -35,7 +35,7 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
 
     @Override
     protected boolean isFullAuto() {
-        return gunItem == mod_IFN_FN5728Guns.item_p90.get();
+        return gunItem == mod_IFN_FN5728Guns.item_p90;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
 
     @Override
     protected boolean isAmmo(ItemStack stack) {
-        return stack.getItem() == mod_IFN_FN5728Guns.item_ss190.get();
+        return stack.getItem() == mod_IFN_FN5728Guns.item_ss190;
     }
 
     @Override
@@ -111,7 +111,7 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
                 bulletEntity.flame = true;
             }
             float bbure = gun.bure;
-            if (this.maid.isCrawling()) {
+            if (this.maid.isInSneakingPose()) {
                 bbure = gun.bureads;
             }
             bulletEntity.setVelocity(this.maid,
@@ -135,7 +135,7 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
             xz = -1.57f;
         }
         double yy = gunItem.fire_posy;
-        if (this.maid.isCrawling()) {
+        if (this.maid.isInSneakingPose()) {
             yy = gunItem.fire_posy - 0.2F;
         }
         double zzz = gunItem.fire_posz * Math.cos(Math.toRadians(-this.maid.getPitch()));
@@ -154,7 +154,7 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
 
     @Override
     protected int getShootIntervalLength() {
-        return mod_IFN_FN5728Guns.item_fiveseven.get() == gunItem ? 10 : 2;
+        return mod_IFN_FN5728Guns.item_fiveseven == gunItem ? 10 : 2;
     }
 
     @Override

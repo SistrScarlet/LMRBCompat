@@ -5,6 +5,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Map;
@@ -37,7 +38,7 @@ public class ConfigHubScreen extends Screen {
 
         for (Map.Entry<String, ConfigScreenInfo> entry : map.entrySet()) {
             var info = entry.getValue();
-            var title = Text.translatable(info.getTranslatable());
+            var title = new TranslatableText(info.getTranslatable());
             this.addDrawableChild(new ButtonWidget(
                     left + (index % 3) * buttonWidth,
                     top + (index / 3) * buttonHeight,

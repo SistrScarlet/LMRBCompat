@@ -19,8 +19,8 @@ public class FN5728Compat {
     public void init() {
         register("shooter", ModeType
                 .<ShooterMode>builder((type, entity) -> new ShooterMode(type, "Shooter", entity))
-                .addItemMatcher(ItemMatchers.item(mod_IFN_FN5728Guns.item_fiveseven.get()), ItemMatcher.Priority.HIGH)
-                .addItemMatcher(ItemMatchers.item(mod_IFN_FN5728Guns.item_p90.get()), ItemMatcher.Priority.HIGH)
+                .addItemMatcher(ItemMatchers.item(mod_IFN_FN5728Guns.item_fiveseven), ItemMatcher.Priority.HIGH)
+                .addItemMatcher(ItemMatchers.item(mod_IFN_FN5728Guns.item_p90), ItemMatcher.Priority.HIGH)
                 .build());
 
         AutoConfig.register(FN5728Config.class, GsonConfigSerializer::new);

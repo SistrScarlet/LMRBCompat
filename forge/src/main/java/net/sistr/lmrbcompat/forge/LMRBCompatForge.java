@@ -1,7 +1,7 @@
 package net.sistr.lmrbcompat.forge;
 
 import dev.architectury.platform.forge.EventBuses;
-import net.minecraftforge.client.ConfigScreenHandler;
+import net.minecraftforge.client.ConfigGuiHandler;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -25,8 +25,8 @@ public class LMRBCompatForge {
             LMRBCompatClient.initClient();
         }
 
-        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
-                () -> new ConfigScreenHandler.ConfigScreenFactory(
+        ModLoadingContext.get().registerExtensionPoint(ConfigGuiHandler.ConfigGuiFactory.class,
+                () -> new ConfigGuiHandler.ConfigGuiFactory(
                         (client, parent) -> ConfigScreenManager.getINSTANCE().getConfigScreen(parent)));
     }
 
@@ -41,10 +41,6 @@ public class LMRBCompatForge {
         CompatUtil.ifLoaded("classicguns",
                 id -> ReflectionUtil.invoke(
                         path + "classicguns.ClassicGunsCompat",
-                        "init"));
-        CompatUtil.ifLoaded("gvclib",
-                id -> ReflectionUtil.invoke(
-                        path + "gvclib.GVCLibCompat",
                         "init"));
     }
 }
