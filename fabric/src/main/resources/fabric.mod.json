@@ -25,6 +25,7 @@
   ],
   "depends": {
     "fabricloader": ">=0.15.3",
-    "minecraft": "1.19.4"
+    "minecraft": "1.19.4",
+    "littlemaidrebirth": ">=7.2.0"
   }
 }

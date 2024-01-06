@@ -61,6 +61,13 @@ description='''
    modId="minecraft"
    mandatory=true
    # This version range declares a minimum of the current minecraft version up to but not including the next major version
-   versionRange="[1.19.4)"
+   versionRange="[1.19.4,)"
+   ordering="NONE"
+   side="BOTH"
+[[dependencies.lmrbcompat]]
+   modId="littlemaidrebirth"
+   mandatory=true
+   # This version range declares a minimum of the current minecraft version up to but not including the next major version
+   versionRange="[7.2.0,)"
    ordering="NONE"
    side="BOTH"
