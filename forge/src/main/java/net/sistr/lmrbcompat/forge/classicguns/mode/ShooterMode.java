@@ -14,7 +14,7 @@ import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
 import net.sistr.lmrbcompat.forge.classicguns.ClassicGunsCompat;
 import net.sistr.lmrbcompat.mode.AbstractShooterMode;
 
-public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
+public class ShooterMode extends AbstractShooterMode<ItemGunBase> {
 
     public ShooterMode(ModeType<ShooterMode> modeType, String name, LittleMaidEntity maid) {
         super(modeType, name, maid);
@@ -22,17 +22,17 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
 
     @Override
     protected boolean isGunItem(ItemStack stack) {
-        return stack.getItem() instanceof CGItemGunBase;
+        return stack.getItem() instanceof ItemGunBase;
     }
 
     @Override
-    protected CGItemGunBase castGunItem(ItemStack stack) {
-        return ((CGItemGunBase) stack.getItem());
+    protected ItemGunBase castGunItem(ItemStack stack) {
+        return ((ItemGunBase) stack.getItem());
     }
 
     @Override
     protected boolean isFullAuto() {
-        return gunItem instanceof CGItemGun_AR;
+        return gunItem instanceof ItemGun_AR;
     }
 
     @Override
@@ -97,7 +97,7 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
                 CGSoundEvent.getSound(gunItem.fire_sound), SoundCategory.NEUTRAL, 3.0F, 1.0F);
 
         for (int pe = 0; pe < gunItem.pellet; ++pe) {
-            CGEntityBullet bullet = new CGEntityBullet(world, maid);
+            EntityBullet bullet = new EntityBullet(world, maid);
             int ep = EnchantmentHelper.getEquipmentLevel(Enchantments.POWER, maid);
             if (gunItem.powor == -1) {
                 bullet.flare = true;
@@ -172,7 +172,7 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
 
     @Override
     protected int getShootIntervalLength() {
-        return gunItem instanceof CGItemGun_SR ? 10 : gunItem.getCycleCount(gunStack) + 2;
+        return gunItem instanceof ItemGun_SR ? 10 : gunItem.getCycleCount(gunStack) + 2;
     }
 
     @Override

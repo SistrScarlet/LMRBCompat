@@ -1,9 +1,9 @@
 package net.sistr.lmrbcompat.client.config;
 
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
@@ -38,22 +38,22 @@ public class ConfigHubScreen extends Screen {
         for (Map.Entry<String, ConfigScreenInfo> entry : map.entrySet()) {
             var info = entry.getValue();
             var title = Text.translatable(info.getTranslatable());
-            var builder = new ButtonWidget.Builder(title,
-                    (button) -> this.client.setScreen(info.getScreen(this)));
-            builder.position(
+            this.addDrawableChild(new ButtonWidget(
                     left + (index % 3) * buttonWidth,
-                    top + (index / 3) * buttonHeight
-            );
-            builder.size(buttonWidth, buttonHeight);
-            this.addDrawableChild(builder.build());
+                    top + (index / 3) * buttonHeight,
+                    buttonWidth,
+                    buttonHeight,
+                    title,
+                    (button) -> this.client.setScreen(info.getScreen(this))
+            ));
             index++;
         }
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context);
-        super.render(context, mouseX, mouseY, delta);
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        renderBackground(matrices);
+        super.render(matrices, mouseX, mouseY, delta);
     }
 
     @Override
@@ -66,11 +66,8 @@ public class ConfigHubScreen extends Screen {
     }
 
     protected ButtonWidget createBackButton() {
-        var builder = new ButtonWidget.Builder(Text.of("back"),
+        return new ButtonWidget(5, 5, 40, 20, Text.of("back"),
                 (button) -> this.client.setScreen(this.parentScreen));
-        builder.position(5, 5);
-        builder.size(40, 20);
-        return builder.build();
     }
 
 }

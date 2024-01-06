@@ -1,6 +1,6 @@
 package net.sistr.lmrbcompat.forge.classicguns;
 
-import classicguns.CGItemGunBase;
+import classicguns.ItemGunBase;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
@@ -19,7 +19,7 @@ public class ClassicGunsCompat {
     public void init() {
         register("shooter", ModeType
                 .<ShooterMode>builder((type, entity) -> new ShooterMode(type, "Shooter", entity))
-                .addItemMatcher(ItemMatchers.clazz(CGItemGunBase.class), ItemMatcher.Priority.NORMAL)
+                .addItemMatcher(ItemMatchers.clazz(ItemGunBase.class), ItemMatcher.Priority.NORMAL)
                 .build());
 
         AutoConfig.register(ClassicGunsConfig.class, GsonConfigSerializer::new);
