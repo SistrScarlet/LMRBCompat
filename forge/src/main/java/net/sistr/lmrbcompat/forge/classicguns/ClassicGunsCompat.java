@@ -5,12 +5,12 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigHolder;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 import net.minecraft.util.Identifier;
-import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.sistr.littlemaidrebirth.api.mode.ItemMatcher;
 import net.sistr.littlemaidrebirth.api.mode.ItemMatchers;
 import net.sistr.littlemaidrebirth.api.mode.ModeManager;
 import net.sistr.littlemaidrebirth.api.mode.ModeType;
+import net.sistr.lmrbcompat.client.config.ConfigScreenInfo;
+import net.sistr.lmrbcompat.client.config.ConfigScreenManager;
 import net.sistr.lmrbcompat.forge.classicguns.mode.ShooterMode;
 
 public class ClassicGunsCompat {
@@ -25,9 +25,10 @@ public class ClassicGunsCompat {
         AutoConfig.register(ClassicGunsConfig.class, GsonConfigSerializer::new);
         CONFIG_HOLDER = AutoConfig.getConfigHolder(ClassicGunsConfig.class);
 
-        /*ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
-                () -> new ConfigScreenHandler.ConfigScreenFactory(
-                        (client, parent) -> AutoConfig.getConfigScreen(ClassicGunsConfig.class, parent).get()));*/
+        ConfigScreenManager.getINSTANCE().register("lmrbcompat-classicguns",
+                ConfigScreenInfo.of("LMRBCompat ClassicGuns",
+                        "text.autoconfig.lmrbcompat-classicguns.title",
+                        screen -> AutoConfig.getConfigScreen(ClassicGunsConfig.class, screen).get()));
     }
 
     private static void register(String id, ModeType<?> modeType) {
