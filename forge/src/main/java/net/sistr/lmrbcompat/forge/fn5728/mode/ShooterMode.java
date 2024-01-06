@@ -111,7 +111,7 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
                 bulletEntity.flame = true;
             }
             float bbure = gun.bure;
-            if (this.maid.isCrawling()) {
+            if (this.maid.isInSneakingPose()) {
                 bbure = gun.bureads;
             }
             bulletEntity.setVelocity(this.maid,
@@ -129,13 +129,17 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
         double zz11 = 0;
         double yy11 = 0;
         float xz;
-        if (this.maid.getMainArm() == Arm.RIGHT) {
-            xz = 1.57f;
+        if (this.maid.isInSneakingPose()) {
+            xz = 0F;
         } else {
-            xz = -1.57f;
+            if (this.maid.getMainArm() == Arm.RIGHT) {
+                xz = 1.57f;
+            } else {
+                xz = -1.57f;
+            }
         }
         double yy = gunItem.fire_posy;
-        if (this.maid.isCrawling()) {
+        if (this.maid.isInSneakingPose()) {
             yy = gunItem.fire_posy - 0.2F;
         }
         double zzz = gunItem.fire_posz * Math.cos(Math.toRadians(-this.maid.getPitch()));
