@@ -115,7 +115,7 @@ public class ShooterMode extends AbstractShooterMode<ItemGunBase> {
                 bullet.flame = true;
             }
             float bbure = gunItem.bure;
-            if (this.maid.isCrawling()) {
+            if (this.maid.isInSneakingPose()) {
                 bbure = gunItem.bureads;
             }
             bullet.setVelocity(this.maid, this.maid.getPitch(), this.maid.getYaw(), 0.0F, gunItem.speed, bbure);
@@ -129,7 +129,7 @@ public class ShooterMode extends AbstractShooterMode<ItemGunBase> {
         double zz11 = 0;
         double yy11 = 0;
         float xz;
-        if (this.maid.isCrawling()) {
+        if (this.maid.isInSneakingPose()) {
             xz = 0;
         } else {
             if (this.maid.getMainArm() == Arm.RIGHT) {
@@ -140,7 +140,7 @@ public class ShooterMode extends AbstractShooterMode<ItemGunBase> {
         }
 
         double yy = gunItem.fire_posy;
-        if (this.maid.isCrawling()) {
+        if (this.maid.isInSneakingPose()) {
             yy = gunItem.fire_posy - 0.2F;
         }
         double zzz = gunItem.fire_posz * Math.cos(Math.toRadians(-this.maid.getPitch()));

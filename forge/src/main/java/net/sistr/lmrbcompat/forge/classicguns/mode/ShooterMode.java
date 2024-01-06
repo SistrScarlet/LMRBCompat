@@ -6,6 +6,7 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.util.Arm;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.sistr.littlemaidrebirth.api.mode.IRangedWeapon;
@@ -89,16 +90,13 @@ public class ShooterMode extends AbstractShooterMode<ItemGunBase> {
 
     @Override
     protected void shootBullet() {
-        fireBullet(gunStack, this.maid.getWorld(), this.maid);
-    }
-
-    private void fireBullet(ItemStack stack, World world, LittleMaidEntity maid) {
-        world.playSound(null, maid.getX(), maid.getY(), maid.getZ(),
+        World world = this.maid.getWorld();
+        world.playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
                 CGSoundEvent.getSound(gunItem.fire_sound), SoundCategory.NEUTRAL, 3.0F, 1.0F);
 
         for (int pe = 0; pe < gunItem.pellet; ++pe) {
-            EntityBullet bullet = new EntityBullet(world, maid);
-            int ep = EnchantmentHelper.getEquipmentLevel(Enchantments.POWER, maid);
+            EntityBullet bullet = new EntityBullet(world, this.maid);
+            int ep = EnchantmentHelper.getEquipmentLevel(Enchantments.POWER, this.maid);
             if (gunItem.powor == -1) {
                 bullet.flare = true;
             } else {
@@ -107,61 +105,57 @@ public class ShooterMode extends AbstractShooterMode<ItemGunBase> {
 
             bullet.setGravity(gunItem.gra);
             bullet.exlevel = gunItem.exlevel;
-            int fm = EnchantmentHelper.getEquipmentLevel(Enchantments.FLAME, maid);
+            int fm = EnchantmentHelper.getEquipmentLevel(Enchantments.FLAME, this.maid);
             if (fm > 0) {
                 bullet.flame = true;
             }
 
             float bbure = gunItem.bure;
-            if (maid.isInSneakingPose()) {
+            if (this.maid.isInSneakingPose()) {
                 bbure = gunItem.bureads;
             }
 
-            bullet.setVelocity(maid, maid.getPitch(), maid.getYaw(), 0.0F, gunItem.speed, bbure);
+            bullet.setVelocity(this.maid, this.maid.getPitch(), this.maid.getYaw(), 0.0F, gunItem.speed, bbure);
             if (!world.isClient) {
                 world.spawnEntity(bullet);
             }
         }
 
         double xx11 = gunItem.recoil;
-        if (maid.isInSneakingPose()) {
+        if (this.maid.isInSneakingPose()) {
             xx11 = gunItem.recoilads;
         }
 
-        double zz11 = maid.getPitch();
+        double zz11 = this.maid.getPitch();
         zz11 += (double) (world.random.nextFloat() * -2.0F) * xx11;
-        maid.setPitch((float) zz11);
+        this.maid.setPitch((float) zz11);
         xx11 = 0.0;
         zz11 = 0.0;
         double yy11 = 0.0;
-        float xz = 1.57F;
-        if (!maid.getMainHandStack().isEmpty() && !maid.getOffHandStack().isEmpty()) {
-            if (maid.getMainHandStack() == stack) {
+        float xz;
+        if (this.maid.isInSneakingPose()) {
+            xz = 0.0F;
+        } else {
+            if (this.maid.getMainArm() == Arm.RIGHT) {
                 xz = 1.57F;
-            } else if (maid.getOffHandStack() == stack) {
+            } else {
                 xz = -1.57F;
             }
-        } else if (maid.isInSneakingPose()) {
-            xz = 0.0F;
-        } else if (maid.getMainHandStack() == stack) {
-            xz = 1.57F;
-        } else if (maid.getOffHandStack() == stack) {
-            xz = -1.57F;
         }
 
         double yy = gunItem.fire_posy;
-        if (maid.isInSneakingPose()) {
+        if (this.maid.isInSneakingPose()) {
             yy = gunItem.fire_posy - 0.2F;
         }
 
-        double zzz = (double) gunItem.fire_posz * Math.cos(Math.toRadians(-maid.getPitch()));
-        xx11 -= (double) MathHelper.sin(maid.headYaw * 0.017453292F) * zzz;
-        zz11 += (double) MathHelper.cos(maid.headYaw * 0.017453292F) * zzz;
-        xx11 -= MathHelper.sin(maid.headYaw * 0.017453292F + xz) * gunItem.fire_posx;
-        zz11 += MathHelper.cos(maid.headYaw * 0.017453292F + xz) * gunItem.fire_posx;
-        yy11 = (double) MathHelper.sqrt((float) (zzz * zzz)) * Math.tan(Math.toRadians(-maid.getPitch())) * 1.0;
+        double zzz = (double) gunItem.fire_posz * Math.cos(Math.toRadians(-this.maid.getPitch()));
+        xx11 -= (double) MathHelper.sin(this.maid.headYaw * 0.017453292F) * zzz;
+        zz11 += (double) MathHelper.cos(this.maid.headYaw * 0.017453292F) * zzz;
+        xx11 -= MathHelper.sin(this.maid.headYaw * 0.017453292F + xz) * gunItem.fire_posx;
+        zz11 += MathHelper.cos(this.maid.headYaw * 0.017453292F + xz) * gunItem.fire_posx;
+        yy11 = (double) MathHelper.sqrt((float) (zzz * zzz)) * Math.tan(Math.toRadians(-this.maid.getPitch())) * 1.0;
         world.addParticle(ParticleTypes.SMOKE,
-                maid.getX() + xx11, maid.getY() + yy + yy11, maid.getZ() + zz11,
+                this.maid.getX() + xx11, this.maid.getY() + yy + yy11, this.maid.getZ() + zz11,
                 0.0, 0.1, 0.0);
     }
 
