@@ -42,5 +42,9 @@ public class LMRBCompatForge {
                 id -> ReflectionUtil.invoke(
                         path + "classicguns.ClassicGunsCompat",
                         "init"));
+        CompatUtil.ifLoaded("gvclib",
+                id -> ReflectionUtil.invoke(
+                        path + "gvclib.GVCLibCompat",
+                        "init"));
     }
 }

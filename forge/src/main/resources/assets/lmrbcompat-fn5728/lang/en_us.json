@@ -4,5 +4,8 @@
   "text.autoconfig.lmrbcompat-fn5728.option.shooterRangeFactor": "Shooter Range Factor",
   "configHub.button.lmrbcompat-classicguns": "ClassicGuns",
   "text.autoconfig.lmrbcompat-classicguns.title": "LMRBCompat ClassicGuns",
-  "text.autoconfig.lmrbcompat-classicguns.option.shooterRangeFactor": "Shooter Range Factor"
+  "text.autoconfig.lmrbcompat-classicguns.option.shooterRangeFactor": "Shooter Range Factor",
+  "configHub.button.lmrbcompat-gvclib": "GVCLib",
+  "text.autoconfig.lmrbcompat-gvclib.title": "LMRBCompat GVCLib",
+  "text.autoconfig.lmrbcompat-gvclib.option.shooterRangeFactor": "Shooter Range Factor"
 }
