@@ -1,195 +1,101 @@
 package net.sistr.lmrbcompat.forge.fn5728.mode;
 
-import fn5728.*;
+import fn5728.IFN_EntitySS190;
+import fn5728.IFN_ItemFN5728;
+import fn5728.IFN_SoundEvent;
+import fn5728.mod_IFN_FN5728Guns;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Arm;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.MathHelper;
-import net.sistr.littlemaidmodelloader.resource.util.LMSounds;
 import net.sistr.littlemaidrebirth.api.mode.IRangedWeapon;
 import net.sistr.littlemaidrebirth.api.mode.ModeType;
 import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
-import net.sistr.littlemaidrebirth.entity.mode.RangedAttackBaseMode;
 import net.sistr.lmrbcompat.forge.fn5728.FN5728Compat;
+import net.sistr.lmrbcompat.mode.AbstractShooterMode;
 
-public class ShooterMode extends RangedAttackBaseMode {
-    protected final LittleMaidEntity maid;
-    protected int reloadTime;
-    protected int shootInterval;
-    protected int inSightTime;
+public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
 
     public ShooterMode(ModeType<ShooterMode> modeType, String name, LittleMaidEntity maid) {
         super(modeType, name, maid);
-        this.maid = maid;
     }
 
     @Override
-    public boolean shouldExecute() {
-        return reloadTime > 0 || super.shouldExecute();
+    protected boolean isGunItem(ItemStack stack) {
+        return stack.getItem() instanceof IFN_ItemFN5728;
     }
 
     @Override
-    public void startExecuting() {
-        super.startExecuting();
-        if (maid.getMainHandStack().getItem() instanceof IFN_ItemP90) {
-            this.mob.play(LMSounds.SHOOT_BURST);
-        }
-        this.mob.swingHand(Hand.MAIN_HAND);
+    protected IFN_ItemFN5728 castGunItem(ItemStack stack) {
+        return ((IFN_ItemFN5728) stack.getItem());
     }
 
     @Override
-    public void tick() {
-        if (shootInterval > 0) {
-            shootInterval--;
-        }
-        var stack = this.maid.getMainHandStack();
-        if (stack.getItem() instanceof IFN_ItemFN5728 gun
-                && gun.isReload(stack) && hasAmmo()) {
-            reloading(gun, stack);
-        } else {
-            this.reloadTime = 0;
-        }
-        super.tick();
+    protected boolean isFullAuto() {
+        return gunItem == mod_IFN_FN5728Guns.item_p90.get();
     }
 
-    protected boolean hasAmmo() {
-        var stack = this.maid.getMainHandStack();
-        if (stack.getItem() instanceof IFN_ItemFN5728) {
-            //弾がオフハンドにある
-            if (isAmmo(this.maid.getOffHandStack())) {
-                return true;
-            }
-
-            //弾がインベントリにある
-            var inventory = this.maid.getInventory();
-            for (int i = 0; i < inventory.size(); i++) {
-                var slot = inventory.getStack(i);
-                if (isAmmo(slot)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    @Override
+    protected boolean shouldReload() {
+        return getAmmoAmount() <= 0;
     }
 
-    private boolean isAmmo(ItemStack stack) {
+    @Override
+    protected boolean isAmmo(ItemStack stack) {
         return stack.getItem() == mod_IFN_FN5728Guns.item_ss190.get();
     }
 
-    private void reloading(IFN_ItemFN5728 gun, ItemStack stack) {
-        var world = this.maid.getWorld();
-        //リロード開始処理
-        if (this.reloadTime++ <= 0) {
-            world.playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                    IFN_SoundEvent.getSound(gun.release_sound),
-                    SoundCategory.NEUTRAL, 1.0F, 1.0F);
-            this.maid.swingHand(Hand.MAIN_HAND);
-            return;
-        }
-
-        //リロードが終わっていないなら終了
-        if (this.reloadTime < gun.reloadtime) {
-            return;
-        }
-        this.reloadTime = 0;
-
-        //リロード完了処理
-        world.playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                IFN_SoundEvent.getSound(gun.reload_sound),
-                SoundCategory.NEUTRAL, 1.0F, 1.0F);
-
-        //無限なら弾消費無しで完了(本来は1発以上持ってないとダメだが面倒なので…)
-        if (EnchantmentHelper.getEquipmentLevel(Enchantments.INFINITY, this.maid) > 0) {
-            gun.setDamage(stack, 0);
-            return;
-        }
-
-        //オフハンドにある弾を込める
-        int remain = stack.getDamage();
-        var off = this.maid.getOffHandStack();
-        if (isAmmo(off)) {
-            int amount = off.getCount();
-            if (amount > 0) {
-                off.decrement(remain);
-                if (off.isEmpty()) {
-                    this.maid.equipStack(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
-                }
-                //remainを減少させる
-                remain = Math.max(0, remain - amount);
-            }
-        }
-
-        //インベントリにある弾を込める
-        var inv = this.maid.getInventory();
-        int size = inv.size();
-        for (int i = 0; i < size; i++) {
-            var slot = inv.getStack(i);
-            if (isAmmo(slot)) {
-                int amount = slot.getCount();
-                if (amount > 0) {
-                    slot.decrement(remain);
-                    if (slot.isEmpty()) {
-                        inv.setStack(i, ItemStack.EMPTY);
-                    }
-                    //remainを減少させる
-                    remain = Math.max(0, remain - amount);
-                }
-            }
-        }
-
-        stack.setDamage(remain);
+    @Override
+    protected boolean isMagazineReload() {
+        return false;
     }
 
     @Override
-    protected void tickRangedAttack(LivingEntity target, ItemStack stack,
-                                    boolean canSee, double distanceSq, float maxRange) {
-        if (canSee) {
-            inSightTime++;
-        } else {
-            inSightTime = 0;
-        }
-        var item = stack.getItem();
-        if (!(item instanceof IFN_ItemFN5728 gun)) {
-            return;
-        }
+    protected int getReloadLength() {
+        return gunItem.reloadtime;
+    }
 
-        var world = this.maid.getWorld();
+    @Override
+    protected boolean isInfinity() {
+        return EnchantmentHelper.getEquipmentLevel(Enchantments.INFINITY, this.maid) > 0;
+    }
 
-        //視界に入れてすぐ、リロード中、射程外、または射線が通らない場合は撃たない
-        if (inSightTime < 10 || gun.isReload(stack) || !canSee || distanceSq >= maxRange * maxRange) {
-            return;
-        }
+    @Override
+    protected int getMaxAmmoAmount() {
+        return gunStack.getMaxDamage() - 1;
+    }
 
-        var result = this.raycastShootLine(target, maxRange,
-                (e) -> e instanceof LivingEntity living && this.mob.isFriend(living));
+    @Override
+    protected int getAmmoAmount() {
+        return getMaxAmmoAmount() - gunStack.getDamage();
+    }
 
-        if (result.isPresent() && result.get().getType() != HitResult.Type.MISS) {
-            return;
-        }
+    @Override
+    protected void setAmmoAmount(int amount) {
+        gunStack.setDamage(getMaxAmmoAmount() - amount);
+    }
 
-        if (shootInterval > 0) {
-            return;
-        }
-        if (item == mod_IFN_FN5728Guns.item_fiveseven.get()) {
-            shootInterval = 10;
-            this.maid.swingHand(Hand.MAIN_HAND);
-        } else {
-            shootInterval = 2;
-        }
-
-        //射撃処理
-
-        world.playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                IFN_SoundEvent.getSound(gun.fire_sound),
+    @Override
+    protected void playReloadStartSound() {
+        this.maid.getWorld().playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
+                IFN_SoundEvent.getSound(gunItem.release_sound),
                 SoundCategory.NEUTRAL, 1.0F, 1.0F);
+    }
 
+    @Override
+    protected void playReloadEndSound() {
+        this.maid.getWorld().playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
+                IFN_SoundEvent.getSound(gunItem.reload_sound),
+                SoundCategory.NEUTRAL, 1.0F, 1.0F);
+    }
+
+    @Override
+    protected void shootBullet() {
+        var gun = gunItem;
+        var world = this.maid.getWorld();
         for (int pe = 0; pe < gun.pellet; ++pe) {
             IFN_EntitySS190 bulletEntity = new IFN_EntitySS190(world, this.maid);
             int ep = EnchantmentHelper.getEquipmentLevel(Enchantments.POWER, this.maid);
@@ -214,18 +120,10 @@ public class ShooterMode extends RangedAttackBaseMode {
                     0.0F, gun.speed, bbure);
             if (!world.isClient()) world.spawnEntity(bulletEntity);
         }
+    }
 
-        stack.setDamage(stack.getDamage() + 1);
-
-        //撃ち切ったタイミングで敵が消滅した場合もリロードするためここでリロード開始
-        if (gun.isReload(stack) && hasAmmo()) {
-            this.reloadTime++;
-            world.playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                    IFN_SoundEvent.getSound(gun.release_sound),
-                    SoundCategory.NEUTRAL, 1.0F, 1.0F);
-            this.maid.swingHand(Hand.MAIN_HAND);
-        }
-
+    @Override
+    protected void shootEffect() {
         //パーティクル
         double xx11 = 0;
         double zz11 = 0;
@@ -236,18 +134,18 @@ public class ShooterMode extends RangedAttackBaseMode {
         } else {
             xz = -1.57f;
         }
-        double yy = gun.fire_posy;
+        double yy = gunItem.fire_posy;
         if (this.maid.isCrawling()) {
-            yy = gun.fire_posy - 0.2F;
+            yy = gunItem.fire_posy - 0.2F;
         }
-        double zzz = gun.fire_posz * Math.cos(Math.toRadians(-this.maid.getPitch()));
+        double zzz = gunItem.fire_posz * Math.cos(Math.toRadians(-this.maid.getPitch()));
         var rad = MathHelper.PI / 180f;
         xx11 -= MathHelper.sin(this.maid.getHeadYaw() * rad) * zzz;
         zz11 += MathHelper.cos(this.maid.getHeadYaw() * rad) * zzz;
-        xx11 -= MathHelper.sin(this.maid.getHeadYaw() * rad + xz) * gun.fire_posx;
-        zz11 += MathHelper.cos(this.maid.getHeadYaw() * rad + xz) * gun.fire_posx;
+        xx11 -= MathHelper.sin(this.maid.getHeadYaw() * rad + xz) * gunItem.fire_posx;
+        zz11 += MathHelper.cos(this.maid.getHeadYaw() * rad + xz) * gunItem.fire_posx;
         yy11 = MathHelper.sqrt((float) (zzz * zzz)) * Math.tan(Math.toRadians(-this.maid.getPitch())) * 1D;
-        world.addParticle(ParticleTypes.SMOKE,
+        this.maid.getWorld().addParticle(ParticleTypes.SMOKE,
                 this.maid.getX() + xx11,
                 this.maid.getY() + yy + yy11,
                 this.maid.getZ() + zz11,
@@ -255,10 +153,15 @@ public class ShooterMode extends RangedAttackBaseMode {
     }
 
     @Override
-    public void resetTask() {
-        super.resetTask();
-        inSightTime = 0;
-        reloadTime = 0;
+    protected int getShootIntervalLength() {
+        return mod_IFN_FN5728Guns.item_fiveseven.get() == gunItem ? 10 : 2;
+    }
+
+    @Override
+    protected void playShootSound() {
+        this.maid.getWorld().playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
+                IFN_SoundEvent.getSound(gunItem.fire_sound),
+                SoundCategory.NEUTRAL, 1.0F, 1.0F);
     }
 
     @Override

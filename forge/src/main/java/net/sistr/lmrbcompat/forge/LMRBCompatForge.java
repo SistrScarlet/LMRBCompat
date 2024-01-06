@@ -31,5 +31,9 @@ public class LMRBCompatForge {
                 id -> ReflectionUtil.invoke(
                         path + "fn5728.FN5728Compat",
                         "init"));
+        CompatUtil.ifLoaded("classicguns",
+                id -> ReflectionUtil.invoke(
+                        path + "classicguns.ClassicGunsCompat",
+                        "init"));
     }
 }
