@@ -1,4 +1,8 @@
 {
+  "configHub.button.lmrbcompat-fn5728": "FN5728",
   "text.autoconfig.lmrbcompat-fn5728.title": "LMRBCompat FN5728",
-  "text.autoconfig.lmrbcompat-fn5728.option.shooterRangeFactor": "Shooter Range Factor"
+  "text.autoconfig.lmrbcompat-fn5728.option.shooterRangeFactor": "Shooter Range Factor",
+  "configHub.button.lmrbcompat-classicguns": "ClassicGuns",
+  "text.autoconfig.lmrbcompat-classicguns.title": "LMRBCompat ClassicGuns",
+  "text.autoconfig.lmrbcompat-classicguns.option.shooterRangeFactor": "Shooter Range Factor"
 }

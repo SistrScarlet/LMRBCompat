@@ -11,6 +11,8 @@ import net.minecraft.world.World;
 import net.sistr.littlemaidrebirth.api.mode.IRangedWeapon;
 import net.sistr.littlemaidrebirth.api.mode.ModeType;
 import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
+import net.sistr.lmrbcompat.forge.classicguns.ClassicGunsCompat;
+import net.sistr.lmrbcompat.forge.classicguns.ClassicGunsConfig;
 import net.sistr.lmrbcompat.forge.fn5728.FN5728Compat;
 import net.sistr.lmrbcompat.mode.AbstractShooterMode;
 
@@ -189,6 +191,6 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
         if (item instanceof IRangedWeapon rangedWeapon) {
             range = rangedWeapon.getMaxRange_LMRB(itemStack, this.mob);
         }
-        return range * FN5728Compat.getConfig().getShooterRangeFactor();
+        return range * ClassicGunsCompat.getConfig().getShooterRangeFactor();
     }
 }

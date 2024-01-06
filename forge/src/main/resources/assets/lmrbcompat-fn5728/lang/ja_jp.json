@@ -1,4 +1,8 @@
 {
+  "configHub.button.lmrbcompat-fn5728": "FN5728",
   "text.autoconfig.lmrbcompat-fn5728.title": "LMRBCompat FN5728",
-  "text.autoconfig.lmrbcompat-fn5728.option.shooterRangeFactor": "射手の射程倍率"
+  "text.autoconfig.lmrbcompat-fn5728.option.shooterRangeFactor": "射手の射程倍率",
+  "configHub.button.lmrbcompat-classicguns": "ClassicGuns",
+  "text.autoconfig.lmrbcompat-classicguns.title": "LMRBCompat ClassicGuns",
+  "text.autoconfig.lmrbcompat-classicguns.option.shooterRangeFactor": "射手の射程倍率"
 }
