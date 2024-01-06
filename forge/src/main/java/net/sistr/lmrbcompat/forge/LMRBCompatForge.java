@@ -1,12 +1,15 @@
 package net.sistr.lmrbcompat.forge;
 
 import dev.architectury.platform.forge.EventBuses;
+import net.minecraftforge.client.ConfigScreenHandler;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.sistr.lmrbcompat.LMRBCompat;
 import net.sistr.lmrbcompat.client.LMRBCompatClient;
+import net.sistr.lmrbcompat.client.config.ConfigScreenManager;
 import net.sistr.lmrbcompat.forge.util.CompatUtil;
 import net.sistr.lmrbcompat.reflection.ReflectionUtil;
 
@@ -21,6 +24,10 @@ public class LMRBCompatForge {
         if (FMLEnvironment.dist.isClient()) {
             LMRBCompatClient.initClient();
         }
+
+        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
+                () -> new ConfigScreenHandler.ConfigScreenFactory(
+                        (client, parent) -> ConfigScreenManager.getINSTANCE().getConfigScreen(parent)));
     }
 
     public void onCommonSetup(FMLCommonSetupEvent event) {
