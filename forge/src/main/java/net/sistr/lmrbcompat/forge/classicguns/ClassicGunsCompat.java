@@ -27,7 +27,7 @@ public class ClassicGunsCompat {
 
         ConfigScreenManager.getINSTANCE().register("lmrbcompat-classicguns",
                 ConfigScreenInfo.of("LMRBCompat ClassicGuns",
-                        "text.autoconfig.lmrbcompat-classicguns.title",
+                        "configHub.button.lmrbcompat-classicguns",
                         screen -> AutoConfig.getConfigScreen(ClassicGunsConfig.class, screen).get()));
     }
 

@@ -1,9 +1,11 @@
 package net.sistr.lmrbcompat.client.config;
 
 import com.google.common.collect.ImmutableMap;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.Map;
 
@@ -25,8 +27,8 @@ public class ConfigHubScreen extends Screen {
 
         int index = 0;
 
-        int width = (int) (this.width * 0.8f);
-        int height = (int) (this.height * 0.8f);
+        int width = (int) (this.width * 0.6f);
+        int height = (int) (this.height * 0.6f);
         int left = (this.width - width) / 2;
         int top = (this.height - height) / 2;
 
@@ -46,6 +48,21 @@ public class ConfigHubScreen extends Screen {
             this.addDrawableChild(builder.build());
             index++;
         }
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        renderBackground(context);
+        super.render(context, mouseX, mouseY, delta);
+    }
+
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE && this.shouldCloseOnEsc()) {
+            this.client.setScreen(this.parentScreen);
+            return true;
+        }
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     protected ButtonWidget createBackButton() {

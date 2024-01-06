@@ -28,7 +28,7 @@ public class FN5728Compat {
 
         ConfigScreenManager.getINSTANCE().register("lmrbcompat-fn5728",
                 ConfigScreenInfo.of("LMRBCompat FN5728",
-                        "text.autoconfig.lmrbcompat-fn5728.title",
+                        "configHub.button.lmrbcompat-fn5728",
                         screen -> AutoConfig.getConfigScreen(FN5728Config.class, screen).get()));
     }
 
