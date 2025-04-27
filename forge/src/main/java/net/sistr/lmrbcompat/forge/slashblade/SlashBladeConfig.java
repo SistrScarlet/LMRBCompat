@@ -5,4 +5,5 @@ import me.shedaniel.autoconfig.annotation.Config;
 
 @Config(name = "lmrbcompat-slashblade")
 public class SlashBladeConfig implements ConfigData {
+    public boolean test = true;
 }
