@@ -7,10 +7,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
+import net.minecraftforge.fml.loading.FMLLoader;
+import net.minecraftforge.fml.loading.moddiscovery.ModInfo;
 import net.sistr.lmrbcompat.LMRBCompat;
 import net.sistr.lmrbcompat.client.LMRBCompatClient;
 import net.sistr.lmrbcompat.client.config.ConfigScreenManager;
-import net.sistr.lmrbcompat.forge.util.CompatUtil;
+import net.sistr.lmrbcompat.compat.CompatUtil;
 import net.sistr.lmrbcompat.reflection.ReflectionUtil;
 
 @Mod(LMRBCompat.MOD_ID)
@@ -31,9 +33,15 @@ public class LMRBCompatForge {
     }
 
     public void onCommonSetup(FMLCommonSetupEvent event) {
+        var modIds = FMLLoader.getLoadingModList().getMods()
+                .stream()
+                .map(ModInfo::getModId)
+                .toList();
+        CompatUtil.init(modIds);
+
         String path = "net.sistr.lmrbcompat.forge.";
-        //ハチャメチャなハードコードであるため、コードにエラーが出た場合でも無事起動できるようにする処置
-        //多分リフレクションは無くても良いかも？
+        // ハチャメチャなハードコードであるため、コードにエラーが出た場合でも無事起動できるようにする処置
+        // 多分リフレクションは無くても良いかも？
         CompatUtil.ifLoaded("fn5728",
                 id -> ReflectionUtil.invoke(
                         path + "fn5728.FN5728Compat",
@@ -41,6 +49,10 @@ public class LMRBCompatForge {
         CompatUtil.ifLoaded("classicguns",
                 id -> ReflectionUtil.invoke(
                         path + "classicguns.ClassicGunsCompat",
+                        "init"));
+        CompatUtil.ifLoaded("slashblade",
+                id -> ReflectionUtil.invoke(
+                        path + "slashblade.SlashBladeCompat",
                         "init"));
     }
 }

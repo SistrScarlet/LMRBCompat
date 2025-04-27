@@ -24,18 +24,18 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
     }
 
     @Override
-    protected boolean isGunItem(ItemStack stack) {
+    protected boolean isWeaponItem(ItemStack stack) {
         return stack.getItem() instanceof IFN_ItemFN5728;
     }
 
     @Override
-    protected IFN_ItemFN5728 castGunItem(ItemStack stack) {
+    protected IFN_ItemFN5728 getWeaponInstance(ItemStack stack) {
         return ((IFN_ItemFN5728) stack.getItem());
     }
 
     @Override
     protected boolean isFullAuto() {
-        return gunItem == mod_IFN_FN5728Guns.item_p90.get();
+        return weapon == mod_IFN_FN5728Guns.item_p90.get();
     }
 
     @Override
@@ -55,7 +55,7 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
 
     @Override
     protected int getReloadLength() {
-        return gunItem.reloadtime;
+        return weapon.reloadtime;
     }
 
     @Override
@@ -65,36 +65,36 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
 
     @Override
     protected int getMaxAmmoAmount() {
-        return gunStack.getMaxDamage() - 1;
+        return weaponStack.getMaxDamage() - 1;
     }
 
     @Override
     protected int getAmmoAmount() {
-        return getMaxAmmoAmount() - gunStack.getDamage();
+        return getMaxAmmoAmount() - weaponStack.getDamage();
     }
 
     @Override
     protected void setAmmoAmount(int amount) {
-        gunStack.setDamage(getMaxAmmoAmount() - amount);
+        weaponStack.setDamage(getMaxAmmoAmount() - amount);
     }
 
     @Override
     protected void playReloadStartSound() {
         this.maid.getWorld().playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                IFN_SoundEvent.getSound(gunItem.release_sound),
+                IFN_SoundEvent.getSound(weapon.release_sound),
                 SoundCategory.NEUTRAL, 1.0F, 1.0F);
     }
 
     @Override
     protected void playReloadEndSound() {
         this.maid.getWorld().playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                IFN_SoundEvent.getSound(gunItem.reload_sound),
+                IFN_SoundEvent.getSound(weapon.reload_sound),
                 SoundCategory.NEUTRAL, 1.0F, 1.0F);
     }
 
     @Override
     protected void shootBullet() {
-        var gun = gunItem;
+        var gun = weapon;
         var world = this.maid.getWorld();
         for (int pe = 0; pe < gun.pellet; ++pe) {
             IFN_EntitySS190 bulletEntity = new IFN_EntitySS190(world, this.maid);
@@ -138,16 +138,16 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
                 xz = -1.57f;
             }
         }
-        double yy = gunItem.fire_posy;
+        double yy = weapon.fire_posy;
         if (this.maid.isInSneakingPose()) {
-            yy = gunItem.fire_posy - 0.2F;
+            yy = weapon.fire_posy - 0.2F;
         }
-        double zzz = gunItem.fire_posz * Math.cos(Math.toRadians(-this.maid.getPitch()));
+        double zzz = weapon.fire_posz * Math.cos(Math.toRadians(-this.maid.getPitch()));
         var rad = MathHelper.PI / 180f;
         xx11 -= MathHelper.sin(this.maid.getHeadYaw() * rad) * zzz;
         zz11 += MathHelper.cos(this.maid.getHeadYaw() * rad) * zzz;
-        xx11 -= MathHelper.sin(this.maid.getHeadYaw() * rad + xz) * gunItem.fire_posx;
-        zz11 += MathHelper.cos(this.maid.getHeadYaw() * rad + xz) * gunItem.fire_posx;
+        xx11 -= MathHelper.sin(this.maid.getHeadYaw() * rad + xz) * weapon.fire_posx;
+        zz11 += MathHelper.cos(this.maid.getHeadYaw() * rad + xz) * weapon.fire_posx;
         yy11 = MathHelper.sqrt((float) (zzz * zzz)) * Math.tan(Math.toRadians(-this.maid.getPitch())) * 1D;
         this.maid.getWorld().addParticle(ParticleTypes.SMOKE,
                 this.maid.getX() + xx11,
@@ -158,13 +158,13 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
 
     @Override
     protected int getShootIntervalLength() {
-        return mod_IFN_FN5728Guns.item_fiveseven.get() == gunItem ? 10 : 2;
+        return mod_IFN_FN5728Guns.item_fiveseven.get() == weapon ? 10 : 2;
     }
 
     @Override
     protected void playShootSound() {
         this.maid.getWorld().playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                IFN_SoundEvent.getSound(gunItem.fire_sound),
+                IFN_SoundEvent.getSound(weapon.fire_sound),
                 SoundCategory.NEUTRAL, 1.0F, 1.0F);
     }
 
@@ -175,6 +175,6 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
         if (item instanceof IRangedWeapon rangedWeapon) {
             range = rangedWeapon.getMaxRange_LMRB(itemStack, this.mob);
         }
-        return range * FN5728Compat.getConfig().getShooterRangeFactor();
+        return range * FN5728Compat.INSTANCE.getConfig().getShooterRangeFactor();
     }
 }

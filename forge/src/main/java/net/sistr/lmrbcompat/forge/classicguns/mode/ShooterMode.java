@@ -22,18 +22,18 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
     }
 
     @Override
-    protected boolean isGunItem(ItemStack stack) {
+    protected boolean isWeaponItem(ItemStack stack) {
         return stack.getItem() instanceof CGItemGunBase;
     }
 
     @Override
-    protected CGItemGunBase castGunItem(ItemStack stack) {
+    protected CGItemGunBase getWeaponInstance(ItemStack stack) {
         return ((CGItemGunBase) stack.getItem());
     }
 
     @Override
     protected boolean isFullAuto() {
-        return gunItem instanceof CGItemGun_AR;
+        return weapon instanceof CGItemGun_AR;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
 
     @Override
     protected boolean isAmmo(ItemStack stack) {
-        return gunItem.isAmmo(stack);
+        return weapon.isAmmo(stack);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
 
     @Override
     protected int getReloadLength() {
-        return gunItem.reloadtime;
+        return weapon.reloadtime;
     }
 
     @Override
@@ -63,23 +63,23 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
 
     @Override
     protected int getMaxAmmoAmount() {
-        return gunStack.getMaxDamage() - 1;
+        return weaponStack.getMaxDamage() - 1;
     }
 
     @Override
     protected int getAmmoAmount() {
-        return getMaxAmmoAmount() - gunStack.getDamage();
+        return getMaxAmmoAmount() - weaponStack.getDamage();
     }
 
     @Override
     protected void setAmmoAmount(int amount) {
-        gunStack.setDamage(getMaxAmmoAmount() - amount);
+        weaponStack.setDamage(getMaxAmmoAmount() - amount);
     }
 
     @Override
     protected void playReloadStartSound() {
         this.maid.getWorld().playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                CGSoundEvent.getSound(gunItem.reload_sound),
+                CGSoundEvent.getSound(weapon.reload_sound),
                 SoundCategory.NEUTRAL, 1.0F, 1.0F);
     }
 
@@ -92,38 +92,38 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
     protected void shootBullet() {
         World world = this.maid.getWorld();
         world.playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                CGSoundEvent.getSound(gunItem.fire_sound), SoundCategory.NEUTRAL, 3.0F, 1.0F);
+                CGSoundEvent.getSound(weapon.fire_sound), SoundCategory.NEUTRAL, 3.0F, 1.0F);
 
-        for (int pe = 0; pe < gunItem.pellet; ++pe) {
+        for (int pe = 0; pe < weapon.pellet; ++pe) {
             CGEntityBullet bullet = new CGEntityBullet(world, this.maid);
             int ep = EnchantmentHelper.getEquipmentLevel(Enchantments.POWER, this.maid);
-            if (gunItem.powor == -1) {
+            if (weapon.powor == -1) {
                 bullet.flare = true;
             } else {
-                bullet.powor = gunItem.powor + ep;
+                bullet.powor = weapon.powor + ep;
             }
 
-            bullet.setGravity(gunItem.gra);
-            bullet.exlevel = gunItem.exlevel;
+            bullet.setGravity(weapon.gra);
+            bullet.exlevel = weapon.exlevel;
             int fm = EnchantmentHelper.getEquipmentLevel(Enchantments.FLAME, this.maid);
             if (fm > 0) {
                 bullet.flame = true;
             }
 
-            float bbure = gunItem.bure;
+            float bbure = weapon.bure;
             if (this.maid.isInSneakingPose()) {
-                bbure = gunItem.bureads;
+                bbure = weapon.bureads;
             }
 
-            bullet.setVelocity(this.maid, this.maid.getPitch(), this.maid.getYaw(), 0.0F, gunItem.speed, bbure);
+            bullet.setVelocity(this.maid, this.maid.getPitch(), this.maid.getYaw(), 0.0F, weapon.speed, bbure);
             if (!world.isClient) {
                 world.spawnEntity(bullet);
             }
         }
 
-        double xx11 = gunItem.recoil;
+        double xx11 = weapon.recoil;
         if (this.maid.isInSneakingPose()) {
-            xx11 = gunItem.recoilads;
+            xx11 = weapon.recoilads;
         }
 
         double zz11 = this.maid.getPitch();
@@ -143,16 +143,16 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
             }
         }
 
-        double yy = gunItem.fire_posy;
+        double yy = weapon.fire_posy;
         if (this.maid.isInSneakingPose()) {
-            yy = gunItem.fire_posy - 0.2F;
+            yy = weapon.fire_posy - 0.2F;
         }
 
-        double zzz = (double) gunItem.fire_posz * Math.cos(Math.toRadians(-this.maid.getPitch()));
+        double zzz = (double) weapon.fire_posz * Math.cos(Math.toRadians(-this.maid.getPitch()));
         xx11 -= (double) MathHelper.sin(this.maid.headYaw * 0.017453292F) * zzz;
         zz11 += (double) MathHelper.cos(this.maid.headYaw * 0.017453292F) * zzz;
-        xx11 -= MathHelper.sin(this.maid.headYaw * 0.017453292F + xz) * gunItem.fire_posx;
-        zz11 += MathHelper.cos(this.maid.headYaw * 0.017453292F + xz) * gunItem.fire_posx;
+        xx11 -= MathHelper.sin(this.maid.headYaw * 0.017453292F + xz) * weapon.fire_posx;
+        zz11 += MathHelper.cos(this.maid.headYaw * 0.017453292F + xz) * weapon.fire_posx;
         yy11 = (double) MathHelper.sqrt((float) (zzz * zzz)) * Math.tan(Math.toRadians(-this.maid.getPitch())) * 1.0;
         world.addParticle(ParticleTypes.SMOKE,
                 this.maid.getX() + xx11, this.maid.getY() + yy + yy11, this.maid.getZ() + zz11,
@@ -166,13 +166,13 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
 
     @Override
     protected int getShootIntervalLength() {
-        return gunItem instanceof CGItemGun_SR ? 10 : gunItem.getCycleCount(gunStack) + 2;
+        return weapon instanceof CGItemGun_SR ? 10 : weapon.getCycleCount(weaponStack) + 2;
     }
 
     @Override
     protected void playShootSound() {
         this.maid.getWorld().playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                CGSoundEvent.getSound(gunItem.fire_sound),
+                CGSoundEvent.getSound(weapon.fire_sound),
                 SoundCategory.NEUTRAL, 1.0F, 1.0F);
     }
 
@@ -183,6 +183,6 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
         if (item instanceof IRangedWeapon rangedWeapon) {
             range = rangedWeapon.getMaxRange_LMRB(itemStack, this.mob);
         }
-        return range * ClassicGunsCompat.getConfig().getShooterRangeFactor();
+        return range * ClassicGunsCompat.INSTANCE.getConfig().getShooterRangeFactor();
     }
 }

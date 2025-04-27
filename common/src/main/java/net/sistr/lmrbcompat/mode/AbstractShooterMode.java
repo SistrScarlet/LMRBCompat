@@ -13,8 +13,8 @@ import net.sistr.littlemaidrebirth.entity.mode.RangedAttackBaseMode;
 
 public abstract class AbstractShooterMode<T extends Item> extends RangedAttackBaseMode {
     protected final LittleMaidEntity maid;
-    protected ItemStack gunStack;
-    protected T gunItem;
+    protected ItemStack weaponStack;
+    protected T weapon;
     protected int reloadTime;
     protected int shootInterval;
     protected int inSightTime;
@@ -27,11 +27,11 @@ public abstract class AbstractShooterMode<T extends Item> extends RangedAttackBa
     @Override
     public boolean shouldExecute() {
         var stack = this.maid.getMainHandStack();
-        if (!isGunItem(stack)) {
+        if (!isWeaponItem(stack)) {
             return false;
         }
-        this.gunStack = stack;
-        this.gunItem = castGunItem(stack);
+        this.weaponStack = stack;
+        this.weapon = getWeaponInstance(stack);
         if (getAmmoAmount() <= 0 && !hasAmmo()) {
             return false;
         }
@@ -43,9 +43,9 @@ public abstract class AbstractShooterMode<T extends Item> extends RangedAttackBa
         return reloadTime > 0 || super.shouldContinueExecuting();
     }
 
-    abstract protected boolean isGunItem(ItemStack stack);
+    abstract protected boolean isWeaponItem(ItemStack stack);
 
-    abstract protected T castGunItem(ItemStack stack);
+    abstract protected T getWeaponInstance(ItemStack stack);
 
     @Override
     public void startExecuting() {
