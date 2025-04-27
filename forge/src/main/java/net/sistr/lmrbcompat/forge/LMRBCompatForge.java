@@ -39,20 +39,19 @@ public class LMRBCompatForge {
                 .toList();
         CompatUtil.init(modIds);
 
-        String path = "net.sistr.lmrbcompat.forge.";
         // ハチャメチャなハードコードであるため、コードにエラーが出た場合でも無事起動できるようにする処置
         // 多分リフレクションは無くても良いかも？
-        CompatUtil.ifLoaded("fn5728",
+        loadCompat("fn5728", "FN5728Compat");
+        loadCompat("classicguns", "ClassicGunsCompat");
+        loadCompat("gvclib", "GVCLibCompat");
+        loadCompat("slashblade", "SlashBladeCompat");
+    }
+
+    private void loadCompat(String modId, String compatPath) {
+        String basePath = "net.sistr.lmrbcompat.forge.";
+        CompatUtil.ifLoaded(modId,
                 id -> ReflectionUtil.invoke(
-                        path + "fn5728.FN5728Compat",
-                        "init"));
-        CompatUtil.ifLoaded("classicguns",
-                id -> ReflectionUtil.invoke(
-                        path + "classicguns.ClassicGunsCompat",
-                        "init"));
-        CompatUtil.ifLoaded("slashblade",
-                id -> ReflectionUtil.invoke(
-                        path + "slashblade.SlashBladeCompat",
+                        basePath + modId + "." + compatPath,
                         "init"));
     }
 }

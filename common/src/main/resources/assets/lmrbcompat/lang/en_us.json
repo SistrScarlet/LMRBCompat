@@ -8,6 +8,9 @@
   "configHub.button.lmrbcompat-classicguns": "ClassicGuns",
   "text.autoconfig.lmrbcompat-classicguns.title": "LMRBCompat ClassicGuns",
   "text.autoconfig.lmrbcompat-classicguns.option.shooterRangeFactor": "Shooter Range Factor",
+  "configHub.button.lmrbcompat-gvclib": "GVCLib",
+  "text.autoconfig.lmrbcompat-gvclib.title": "LMRBCompat GVCLib",
+  "text.autoconfig.lmrbcompat-gvclib.option.shooterRangeFactor": "Shooter Range Factor",
 
   "configHub.button.lmrbcompat-slashblade": "SlashBlade",
   "text.autoconfig.lmrbcompat-slashblade.title": "LMRBCompat SlashBlade"

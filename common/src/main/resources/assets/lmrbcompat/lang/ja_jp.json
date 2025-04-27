@@ -8,6 +8,9 @@
   "configHub.button.lmrbcompat-classicguns": "ClassicGuns",
   "text.autoconfig.lmrbcompat-classicguns.title": "LMRBCompat ClassicGuns",
   "text.autoconfig.lmrbcompat-classicguns.option.shooterRangeFactor": "射手の射程倍率",
+  "configHub.button.lmrbcompat-gvclib": "GVCLib",
+  "text.autoconfig.lmrbcompat-gvclib.title": "LMRBCompat GVCLib",
+  "text.autoconfig.lmrbcompat-gvclib.option.shooterRangeFactor": "射手の射程倍率",
 
   "configHub.button.lmrbcompat-slashblade": "抜刀剣",
   "text.autoconfig.lmrbcompat-slashblade.title": "LMRBCompat 抜刀剣"
