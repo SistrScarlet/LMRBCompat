@@ -15,7 +15,12 @@ public class SlashBladeResharped {
                     var input = isR ? InputCommand.R_CLICK : InputCommand.L_CLICK;
                     mob.getCapability(ItemSlashBlade.INPUT_STATE)
                             .ifPresent((s) -> s.getCommands().add(input));
-                    Object combo = state.progressCombo(mob);
+                    // ISlashBladeStateがdefaultだからか、実機だとprogressComboがNoSuchMethodになるため、
+                    // リフレクションを使用して呼び出す
+                    // Object combo = state.progressCombo(mob);
+                    Object combo = ReflectionUtil.exec(state, "progressCombo", LivingEntity.class)
+                            .orElseThrow()
+                            .exec(mob);
                     mob.getCapability(ItemSlashBlade.INPUT_STATE)
                             .ifPresent((s) -> s.getCommands().remove(input));
 
