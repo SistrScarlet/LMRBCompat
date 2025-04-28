@@ -50,7 +50,7 @@ public class LMRBCompatForge {
     private void loadCompat(String modId, String compatPath) {
         String basePath = "net.sistr.lmrbcompat.forge.";
         CompatUtil.ifLoaded(modId,
-                id -> ReflectionUtil.invoke(
+                id -> ReflectionUtil.execWithInstancing(
                         basePath + modId + "." + compatPath,
                         "init"));
     }

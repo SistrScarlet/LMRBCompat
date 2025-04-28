@@ -1,16 +1,8 @@
 package net.sistr.lmrbcompat.forge.slashblade;
 
-import mods.flammpfeil.slashblade.ability.ArrowReflector;
-import mods.flammpfeil.slashblade.ability.TNTExtinguisher;
-import mods.flammpfeil.slashblade.capability.concentrationrank.ConcentrationRankCapabilityProvider;
-import mods.flammpfeil.slashblade.capability.concentrationrank.IConcentrationRank;
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.sistr.littlemaidrebirth.api.mode.ItemMatcher;
 import net.sistr.littlemaidrebirth.api.mode.ModeType;
@@ -18,7 +10,7 @@ import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
 import net.sistr.lmrbcompat.compat.AbstractCompat;
 import net.sistr.lmrbcompat.forge.slashblade.mode.SlashBladeMode;
 import net.sistr.lmrbcompat.mixin.forge.slashblade.MixinLittleMaidEntity;
-import org.jetbrains.annotations.NotNull;
+import net.sistr.lmrbcompat.reflection.ReflectionUtil;
 
 import static mods.flammpfeil.slashblade.item.ItemSlashBlade.BLADESTATE;
 
@@ -53,75 +45,50 @@ public class SlashBladeCompat extends AbstractCompat<SlashBladeConfig> {
         return "SlashBlade";
     }
 
+    public Boolean slashInput(ItemStack stack, LivingEntity mob, boolean isR) {
+        if (ReflectionUtil.isClassExist("mods.flammpfeil.slashblade.capability.slashblade.ComboState")) {
+            return ReflectionUtil.execStatic(
+                            "net.sistr.lmrbcompat.forge.slashblade.SlashBladeOriginal",
+                            "slashInput",
+                            ItemStack.class, LivingEntity.class, boolean.class)
+                    .map(o -> o.exec(stack, mob, isR).orElse(false))
+                    .filter(o -> o instanceof Boolean)
+                    .map(o -> (Boolean) o)
+                    .orElse(false);
+        } else {
+            return ReflectionUtil.execStatic(
+                            "net.sistr.lmrbcompat.forge.slashblade.SlashBladeResharped",
+                            "slashInput",
+                            ItemStack.class, LivingEntity.class, boolean.class)
+                    .map(o -> o.exec(stack, mob, isR).orElse(false))
+                    .filter(o -> o instanceof Boolean)
+                    .map(o -> (Boolean) o)
+                    .orElse(false);
+        }
+    }
+
     /**
-     * Called from {@link MixinLittleMaidEntity#onTick}
+     * Called from {@link MixinLittleMaidEntity}
      */
     public static void tickLittleMaid(LittleMaidEntity maid) {
-        var stack = maid.getMainHandStack();
-        if (stack.getItem() instanceof ItemSlashBlade) {
-            stack.getCapability(BLADESTATE).ifPresent((state) -> {
-                maid.getCapability(ItemSlashBlade.INPUT_STATE)
-                        .ifPresent((mInput) -> mInput.getScheduler().onTick(maid));
-                state.resolvCurrentComboState(maid).tickAction(maid);
-                state.sendChanges(maid);
-            });
-        }
-    }
-
-    private static @NotNull EntityAttributeModifier getEntityAttributeModifier(LittleMaidEntity attacker, ISlashBladeState state, IConcentrationRank.ConcentrationRanks rankBonus) {
-        float modifiedRatio = (float) rankBonus.level / 2.0F;
-        if (IConcentrationRank.ConcentrationRanks.S.level <= rankBonus.level
-                && attacker.getOwner() instanceof PlayerEntity player) {
-            // 本来はアタッカー本人だが、あえてプレイヤー経験値を参照する
-            int level = player.experienceLevel;
-            modifiedRatio = Math.max(modifiedRatio, (float) Math.min(level, state.getRefine()));
-        }
-
-        return new EntityAttributeModifier("RankDamageBonus", modifiedRatio, EntityAttributeModifier.Operation.ADDITION);
-    }
-
-    public static void littlemaidDoMelee(LittleMaidEntity attacker, Entity target, boolean forceHit, boolean resetHit) {
-        attacker.getMainHandStack().getCapability(BLADESTATE).ifPresent((state) -> {
-            IConcentrationRank.ConcentrationRanks rankBonus = attacker.getCapability(ConcentrationRankCapabilityProvider.RANK_POINT)
-                    .map((rp) -> rp.getRank(attacker.getEntityWorld().getTime()))
-                    .orElse(IConcentrationRank.ConcentrationRanks.NONE);
-            EntityAttributeModifier am = getEntityAttributeModifier(attacker, state, rankBonus);
-
-            try {
-                state.setOnClick(true);
-                attacker.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addTemporaryModifier(am);
-                // アタック部分をプレイヤーのものから置き換え
-                doManagedAttack(attacker, target, forceHit, resetHit);
-            } finally {
-                attacker.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).removeModifier(am);
-                state.setOnClick(false);
+        var inv = maid.getInventory();
+        for (int i = 0; i < inv.size(); i++) {
+            var stack = inv.getStack(i);
+            if (stack.isEmpty()) {
+                continue;
             }
-        });
-
-        ArrowReflector.doReflect(target, attacker);
-        TNTExtinguisher.doExtinguishing(target, attacker);
-    }
-
-    private static void doManagedAttack(LittleMaidEntity attacker, Entity target, boolean forceHit, boolean resetHit) {
-        if (forceHit) {
-            target.timeUntilRegen = 0;
+            if (stack.getItem() instanceof ItemSlashBlade) {
+                stack.inventoryTick(maid.getWorld(), maid, i, false);
+            }
         }
-        attack(attacker, target);
-        if (resetHit) {
-            target.timeUntilRegen = 0;
-        }
-    }
 
-    private static void attack(LittleMaidEntity attacker, Entity target) {
-        float baseAmount = (float) attacker.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).getValue();
-        if (target.damage(attacker.getDamageSources().mobAttack(attacker), baseAmount)
-                && target instanceof LivingEntity livingTarget) {
-            ItemStack stack = attacker.getMainHandStack();
-            stack.getCapability(ItemSlashBlade.BLADESTATE).ifPresent((state) -> {
-                state.resolvCurrentComboState(attacker).hitEffect(livingTarget, attacker);
-                state.damageBlade(stack, 1, attacker, ItemSlashBlade.getOnBroken(stack));
-            });
+        var mainHandStack = maid.getMainHandStack();
+        if (!mainHandStack.isEmpty() && mainHandStack.getItem() instanceof ItemSlashBlade) {
+            mainHandStack.inventoryTick(maid.getWorld(), maid, 0, true);
+        }
+        var offHandStack = maid.getOffHandStack();
+        if (!offHandStack.isEmpty() && offHandStack.getItem() instanceof ItemSlashBlade) {
+            offHandStack.inventoryTick(maid.getWorld(), maid, inv.size(), true);
         }
     }
-
 }

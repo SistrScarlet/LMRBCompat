@@ -1,8 +1,6 @@
 package net.sistr.lmrbcompat.forge.slashblade.mode;
 
-import mods.flammpfeil.slashblade.capability.slashblade.ComboState;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
-import mods.flammpfeil.slashblade.util.InputCommand;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -11,6 +9,7 @@ import net.sistr.littlemaidmodelloader.entity.compound.SoundPlayable;
 import net.sistr.littlemaidmodelloader.resource.util.LMSounds;
 import net.sistr.littlemaidrebirth.api.mode.Mode;
 import net.sistr.littlemaidrebirth.api.mode.ModeType;
+import net.sistr.lmrbcompat.forge.slashblade.SlashBladeCompat;
 import net.sistr.lmrbcompat.mode.AbstractFencerMode;
 
 import java.util.Optional;
@@ -86,21 +85,13 @@ public class SlashBladeMode extends AbstractFencerMode<ItemStack> {
     protected void attack() {
         this.mob.lookAtEntity(target, 30.0F, 30.0F);
         attackCool = getMaxAttackCool();
-        this.weapon.getCapability(ItemSlashBlade.BLADESTATE)
-                .ifPresent((state) -> {
-                    var input = this.combo == Combo.R ? InputCommand.R_CLICK : InputCommand.L_CLICK;
-                    this.mob.getCapability(ItemSlashBlade.INPUT_STATE)
-                            .ifPresent((s) -> s.getCommands().add(input));
-                    ComboState combo = state.progressCombo(this.mob);
-                    this.mob.getCapability(ItemSlashBlade.INPUT_STATE)
-                            .ifPresent((s) -> s.getCommands().remove(input));
-                    if (combo != ComboState.NONE) {
-                        this.mob.swingHand(Hand.MAIN_HAND);
-                        if (this.mob instanceof SoundPlayable soundPlayable) {
-                            soundPlayable.play(LMSounds.ATTACK);
-                        }
-                    }
-                });
+        boolean flag = SlashBladeCompat.INSTANCE.slashInput(weaponStack, mob, combo == Combo.R);
+        if (flag) {
+            this.mob.swingHand(Hand.MAIN_HAND);
+            if (this.mob instanceof SoundPlayable soundPlayable) {
+                soundPlayable.play(LMSounds.ATTACK);
+            }
+        }
     }
 
     @Override
