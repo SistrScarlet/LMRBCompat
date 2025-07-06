@@ -23,6 +23,8 @@ import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
 import net.sistr.lmrbcompat.forge.gvclib.GVCLibCompat;
 import net.sistr.lmrbcompat.mode.AbstractShooterMode;
 
+import java.util.Optional;
+
 public class ShooterMode extends AbstractShooterMode<ItemGunBase> {
 
     public ShooterMode(ModeType<ShooterMode> modeType, String name, LittleMaidEntity maid) {
@@ -35,8 +37,8 @@ public class ShooterMode extends AbstractShooterMode<ItemGunBase> {
     }
 
     @Override
-    protected ItemGunBase getWeaponInstance(ItemStack stack) {
-        return ((ItemGunBase) stack.getItem());
+    protected Optional<ItemGunBase> getWeaponInstance(ItemStack stack) {
+        return Optional.of(((ItemGunBase) stack.getItem()));
     }
 
     @Override

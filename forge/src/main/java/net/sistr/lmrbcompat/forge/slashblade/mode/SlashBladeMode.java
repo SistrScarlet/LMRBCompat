@@ -9,8 +9,8 @@ import net.sistr.littlemaidmodelloader.entity.compound.SoundPlayable;
 import net.sistr.littlemaidmodelloader.resource.util.LMSounds;
 import net.sistr.littlemaidrebirth.api.mode.Mode;
 import net.sistr.littlemaidrebirth.api.mode.ModeType;
+import net.sistr.littlemaidrebirth.entity.mode.AbstractFencerMode;
 import net.sistr.lmrbcompat.forge.slashblade.SlashBladeCompat;
-import net.sistr.lmrbcompat.mode.AbstractFencerMode;
 
 import java.util.Optional;
 
@@ -20,7 +20,7 @@ public class SlashBladeMode extends AbstractFencerMode<ItemStack> {
     private Combo combo;
 
     public SlashBladeMode(MobEntity mob, ModeType<? extends Mode> modeType, String name) {
-        super(mob, modeType, name);
+        super(mob, modeType, name, 1.0f);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class SlashBladeMode extends AbstractFencerMode<ItemStack> {
     protected void preTryAttackTick() {
         super.preTryAttackTick();
         // 距離が近すぎたら後退
-        var distanceSq = getBoundingDistance(this.target);
+        var distanceSq = getBoundingDistanceSq(this.target);
         var minRange = getMinAttackRange();
         if (distanceSq < minRange) {
             // 後退量を相手との相対距離で決める
@@ -120,7 +120,7 @@ public class SlashBladeMode extends AbstractFencerMode<ItemStack> {
     }
 
     protected float getMinAttackRange() {
-        return 3.0f;
+        return 3.0f * 3.0f;
     }
 
     protected int getMaxAttackCool() {

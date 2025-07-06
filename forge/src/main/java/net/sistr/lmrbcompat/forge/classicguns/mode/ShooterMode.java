@@ -15,6 +15,8 @@ import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
 import net.sistr.lmrbcompat.forge.classicguns.ClassicGunsCompat;
 import net.sistr.lmrbcompat.mode.AbstractShooterMode;
 
+import java.util.Optional;
+
 public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
 
     public ShooterMode(ModeType<ShooterMode> modeType, String name, LittleMaidEntity maid) {
@@ -27,8 +29,8 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
     }
 
     @Override
-    protected CGItemGunBase getWeaponInstance(ItemStack stack) {
-        return ((CGItemGunBase) stack.getItem());
+    protected Optional<CGItemGunBase> getWeaponInstance(ItemStack stack) {
+        return Optional.of(((CGItemGunBase) stack.getItem()));
     }
 
     @Override

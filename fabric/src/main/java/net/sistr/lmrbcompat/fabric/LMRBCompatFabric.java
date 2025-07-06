@@ -12,12 +12,12 @@ import net.sistr.lmrbcompat.compat.CompatUtil;
 public class LMRBCompatFabric implements ModInitializer, ClientModInitializer {
     @Override
     public void onInitialize() {
-        LMRBCompat.init();
         var modIds = FabricLoader.getInstance().getAllMods()
                 .stream()
                 .map(mod -> mod.getMetadata().getId())
                 .toList();
         CompatUtil.init(modIds);
+        LMRBCompat.init();
     }
 
     @Environment(EnvType.CLIENT)

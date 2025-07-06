@@ -22,7 +22,6 @@ public class LMRBCompatForge {
         EventBuses.registerModEventBus(LMRBCompat.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
 
-        LMRBCompat.init();
         if (FMLEnvironment.dist.isClient()) {
             LMRBCompatClient.initClient();
         }
@@ -38,6 +37,7 @@ public class LMRBCompatForge {
                 .map(ModInfo::getModId)
                 .toList();
         CompatUtil.init(modIds);
+        LMRBCompat.init();
 
         // ハチャメチャなハードコードであるため、コードにエラーが出た場合でも無事起動できるようにする処置
         // 多分リフレクションは無くても良いかも？

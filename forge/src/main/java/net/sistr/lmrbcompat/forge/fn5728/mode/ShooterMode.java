@@ -17,6 +17,8 @@ import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
 import net.sistr.lmrbcompat.forge.fn5728.FN5728Compat;
 import net.sistr.lmrbcompat.mode.AbstractShooterMode;
 
+import java.util.Optional;
+
 public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
 
     public ShooterMode(ModeType<ShooterMode> modeType, String name, LittleMaidEntity maid) {
@@ -29,8 +31,8 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
     }
 
     @Override
-    protected IFN_ItemFN5728 getWeaponInstance(ItemStack stack) {
-        return ((IFN_ItemFN5728) stack.getItem());
+    protected Optional<IFN_ItemFN5728> getWeaponInstance(ItemStack stack) {
+        return Optional.of(((IFN_ItemFN5728) stack.getItem()));
     }
 
     @Override

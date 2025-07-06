@@ -13,5 +13,9 @@
   "text.autoconfig.lmrbcompat-gvclib.option.shooterRangeFactor": "Shooter Range Factor",
 
   "configHub.button.lmrbcompat-slashblade": "SlashBlade",
-  "text.autoconfig.lmrbcompat-slashblade.title": "LMRBCompat SlashBlade"
+  "text.autoconfig.lmrbcompat-slashblade.title": "LMRBCompat SlashBlade",
+
+  "configHub.button.lmrbcompat-actionarms": "ActionArms",
+  "text.autoconfig.lmrbcompat-actionarms.title": "LMRBCompat ActionArms",
+  "text.autoconfig.lmrbcompat-actionarms.option.test": "Test"
 }

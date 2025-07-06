@@ -17,6 +17,9 @@
     ],
     "client": [
       "net.sistr.lmrbcompat.fabric.LMRBCompatFabric"
+    ],
+    "modmenu": [
+      "net.sistr.lmrbcompat.fabric.modmenu.LMRBCompatModMenu"
     ]
   },
   "mixins": [

@@ -9,9 +9,11 @@ import net.minecraft.util.hit.HitResult;
 import net.sistr.littlemaidmodelloader.resource.util.LMSounds;
 import net.sistr.littlemaidrebirth.api.mode.ModeType;
 import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
-import net.sistr.littlemaidrebirth.entity.mode.RangedAttackBaseMode;
+import net.sistr.littlemaidrebirth.entity.mode.AbstractArcherMode;
 
-public abstract class AbstractShooterMode<T extends Item> extends RangedAttackBaseMode {
+import java.util.Optional;
+
+public abstract class AbstractShooterMode<T extends Item> extends AbstractArcherMode<T> {
     protected final LittleMaidEntity maid;
     protected ItemStack weaponStack;
     protected T weapon;
@@ -31,7 +33,7 @@ public abstract class AbstractShooterMode<T extends Item> extends RangedAttackBa
             return false;
         }
         this.weaponStack = stack;
-        this.weapon = getWeaponInstance(stack);
+        this.weapon = getWeaponInstance(stack).get();
         if (getAmmoAmount() <= 0 && !hasAmmo()) {
             return false;
         }
@@ -45,7 +47,7 @@ public abstract class AbstractShooterMode<T extends Item> extends RangedAttackBa
 
     abstract protected boolean isWeaponItem(ItemStack stack);
 
-    abstract protected T getWeaponInstance(ItemStack stack);
+    abstract protected Optional<T> getWeaponInstance(ItemStack stack);
 
     @Override
     public void startExecuting() {

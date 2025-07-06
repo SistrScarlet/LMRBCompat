@@ -39,11 +39,15 @@ dependencies {
     }
 
     modApi fileTree(dir: './mods', include: '*.jar')
+    modRuntimeOnly fileTree(dir: './mods_runtime', include: '*.jar')
 
     //include modImplementation("com.jamieswhiteshirt:reach-entity-attributes:${rootProject.reach_entity_attributes_version}")
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
+
+    runtimeOnly("de.javagl:jgltf-model:${rootProject.jgltf_version}")
+    runtimeOnly("de.javagl:jgltf-impl-v2:${rootProject.jgltf_version}")
 }
 
 processResources {
