@@ -36,13 +36,13 @@ public class LMGunBaseFeatureRenderer<T extends LivingEntity & IHasMultiModel, M
                 matrices.scale(scale, scale, scale);
             }
 
-            this.renderArmWithItem(entity, rightStack, Arm.RIGHT, matrices, vertexConsumers);
-            this.renderArmWithItem(entity, leftStack, Arm.LEFT, matrices, vertexConsumers);
+            this.renderArmWithItem(entity, rightStack, Arm.RIGHT, matrices, vertexConsumers, light);
+            this.renderArmWithItem(entity, leftStack, Arm.LEFT, matrices, vertexConsumers, light);
             matrices.pop();
         }
     }
 
-    protected void renderArmWithItem(T entity, ItemStack stack, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
+    protected void renderArmWithItem(T entity, ItemStack stack, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
         if (!stack.isEmpty()) {
             matrices.push();
             if (entity.isInSneakingPose()) {
@@ -60,19 +60,21 @@ public class LMGunBaseFeatureRenderer<T extends LivingEntity & IHasMultiModel, M
             matrices.translate((float) (isLeft ? -1 : 1) / 16.0F * 2.0F, -0.5F, 0.15F);
             if (!stack.isEmpty() && stack.getItem() instanceof ItemGunBase gun) {
                 gun.ModelLoad();
-                boolean isReload = false;
-                MinecraftClient.getInstance().getEntityRenderDispatcher().textureManager.getTexture(new Identifier(gun.obj_tex));
-                VertexConsumer vertexconsumer = vertexConsumers.getBuffer(RenderTypeGun.gunrender(new Identifier(gun.obj_tex)));
-                gun.obj_model.renderPart(vertexconsumer, matrices, "mat1");
-                gun.obj_model.renderPart(vertexconsumer, matrices, "mat100");
-                gun.obj_model.renderPart(vertexconsumer, matrices, "mat2");
-                if (!isReload) {
-                    gun.obj_model.renderPart(vertexconsumer, matrices, "mat3");
+                if (gun.obj_model != null) {
+                    boolean isReload = false;
+                    MinecraftClient.getInstance().getEntityRenderDispatcher().textureManager.getTexture(Identifier.parse(gun.obj_tex));
+                    VertexConsumer vertexconsumer = vertexConsumers.getBuffer(RenderTypeGun.gunrender(Identifier.parse(gun.obj_tex)));
+                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat1", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat100", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat2", 255, 255, 255, light);
+                    if (!isReload)gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat3", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat20", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat21", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat22", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat25", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat31", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat32", 255, 255, 255, light);
                 }
-
-                gun.obj_model.renderPart(vertexconsumer, matrices, "mat25");
-                gun.obj_model.renderPart(vertexconsumer, matrices, "mat31");
-                gun.obj_model.renderPart(vertexconsumer, matrices, "mat32");
             }
 
             matrices.pop();
