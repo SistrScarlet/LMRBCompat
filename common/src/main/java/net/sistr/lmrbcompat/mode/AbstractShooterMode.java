@@ -259,8 +259,6 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
         shootBullet();
         shootEffect();
 
-        stack.setDamage(stack.getDamage() + 1);
-
         //撃ち切ったタイミングで敵が消滅した場合もリロードするためここでリロード開始
         if (shouldReload() && hasAmmo()) {
             this.reloadTime++;

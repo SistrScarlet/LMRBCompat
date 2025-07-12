@@ -3,6 +3,7 @@ package net.sistr.lmrbcompat.forge.classicguns.mode;
 import classicguns.*;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
@@ -159,6 +160,8 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
         world.addParticle(ParticleTypes.SMOKE,
                 this.maid.getX() + xx11, this.maid.getY() + yy + yy11, this.maid.getZ() + zz11,
                 0.0, 0.1, 0.0);
+
+        this.weaponStack.damage(1, this.maid, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
     }
 
     @Override

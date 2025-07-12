@@ -6,6 +6,7 @@ import fn5728.IFN_SoundEvent;
 import fn5728.mod_IFN_FN5728Guns;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
@@ -122,6 +123,8 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
                     0.0F, gun.speed, bbure);
             if (!world.isClient()) world.spawnEntity(bulletEntity);
         }
+
+        this.weaponStack.damage(1, this.maid, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
     }
 
     @Override

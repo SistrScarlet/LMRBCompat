@@ -4,7 +4,7 @@ import gvclib.entity.bullet.*;
 import gvclib.event.GVCSoundEvent;
 import gvclib.item.ItemAttachment;
 import gvclib.item.ItemGunBase;
-import gvclib.item.ItemGun_SR;
+import gvclib.item.ItemGun_AR;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
@@ -43,7 +43,7 @@ public class ShooterMode extends AbstractShooterMode<ItemGunBase> {
 
     @Override
     protected boolean isFullAuto() {
-        return weapon instanceof ItemGun_SR;
+        return weapon instanceof ItemGun_AR;
     }
 
     @Override
@@ -88,7 +88,7 @@ public class ShooterMode extends AbstractShooterMode<ItemGunBase> {
 
     @Override
     protected void playReloadStartSound() {
-        var soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(new Identifier(weapon.gun_mod_id, weapon.reload_sound));
+        var soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(Identifier.of(weapon.gun_mod_id, weapon.reload_sound));
         if (soundEvent == null) {
             return;
         }
@@ -109,9 +109,9 @@ public class ShooterMode extends AbstractShooterMode<ItemGunBase> {
     protected void fireBullet(ItemStack stack, World worldIn, LivingEntity entity) {
         if (!weapon.isReload(stack)) {
             ItemAttachment supp = weapon.getAttachment(weapon, stack, 8);
-            SoundEvent gun = ForgeRegistries.SOUND_EVENTS.getValue(new Identifier(weapon.gun_mod_id, weapon.fire_sound));
+            SoundEvent gun = ForgeRegistries.SOUND_EVENTS.getValue(Identifier.of(weapon.gun_mod_id, weapon.fire_sound));
             if (supp != null) {
-                SoundEvent gunsupp = ForgeRegistries.SOUND_EVENTS.getValue(new Identifier(weapon.gun_mod_id, weapon.fire_sound_supp));
+                SoundEvent gunsupp = ForgeRegistries.SOUND_EVENTS.getValue(Identifier.of(weapon.gun_mod_id, weapon.fire_sound_supp));
                 if (gun != null) {
                     worldIn.playSound(null, entity.getX(), entity.getY(), entity.getZ(), gunsupp, SoundCategory.NEUTRAL, 3.0F, 1.0F);
                 } else {
@@ -260,12 +260,12 @@ public class ShooterMode extends AbstractShooterMode<ItemGunBase> {
 
     @Override
     protected int getShootIntervalLength() {
-        return weapon.cycle;
+        return isFullAuto() ? weapon.cycle : Math.max(10, weapon.cycle);
     }
 
     @Override
     protected void playShootSound() {
-        var soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(new Identifier(weapon.gun_mod_id, weapon.fire_sound));
+        var soundEvent = ForgeRegistries.SOUND_EVENTS.getValue(Identifier.of(weapon.gun_mod_id, weapon.fire_sound));
         if (soundEvent == null) {
             return;
         }
