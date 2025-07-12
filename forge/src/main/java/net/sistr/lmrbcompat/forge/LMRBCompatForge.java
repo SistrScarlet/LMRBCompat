@@ -17,16 +17,16 @@ import net.sistr.lmrbcompat.reflection.ReflectionUtil;
 
 @Mod(LMRBCompat.MOD_ID)
 public class LMRBCompatForge {
-    public LMRBCompatForge() {
+    public LMRBCompatForge(FMLJavaModLoadingContext context) {
         // Submit our event bus to let architectury register our content on the right time
-        EventBuses.registerModEventBus(LMRBCompat.MOD_ID, FMLJavaModLoadingContext.get().getModEventBus());
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
+        EventBuses.registerModEventBus(LMRBCompat.MOD_ID, context.getModEventBus());
+        context.getModEventBus().addListener(this::onCommonSetup);
 
         if (FMLEnvironment.dist.isClient()) {
             LMRBCompatClient.initClient();
         }
 
-        ModLoadingContext.get().registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
+        context.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
                 () -> new ConfigScreenHandler.ConfigScreenFactory(
                         (client, parent) -> ConfigScreenManager.getINSTANCE().getConfigScreen(parent)));
     }
