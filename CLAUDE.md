@@ -16,7 +16,7 @@ This is a multi-platform mod using Architectury's structure:
 
 ### Key Components
 
-1. **Compatibility System**: Uses reflection-based loading to dynamically enable compatibility modules when specific mods are detected
+1. **Compatibility System**: Uses `loadCompat()` with direct class references and `try-catch (LinkageError)` to safely enable compatibility modules when specific mods are detected
 2. **Mode System**: Abstract mode classes (like AbstractShooterMode) that define behavior patterns for different weapon types
 3. **Configuration**: Per-mod configuration files using Cloth Config for settings management
 4. **Mixin Integration**: Uses Mixin to modify existing mod behavior for compatibility
@@ -28,7 +28,7 @@ This is a multi-platform mod using Architectury's structure:
 - FN5728 (Forge only)
 - GVCLib (Forge only)
 - SlashBlade variants (Forge only)
-- HandmadeGuns2 (Forge only)
+- HandmadeGuns2 (Forge only, GVCLib が前提 Mod のため GVCLib 互換で対応)
 
 ## Build Commands
 
@@ -64,8 +64,8 @@ This is a multi-platform mod using Architectury's structure:
 1. Create compat class in `common/src/main/java/net/sistr/lmrbcompat/[modname]/`
 2. Add mode implementations extending AbstractShooterMode or similar
 3. Add configuration class if needed
-4. Register in LMRBCompat.init() using loadCompat()
-5. For Forge-specific features, add platform-specific implementations
+4. Register in `LMRBCompat.init()` (common) or `LMRBCompatForge.onCommonSetup()` (Forge) using `LMRBCompat.loadCompat("modid", ModCompat::new)`
+5. For Forge-specific features, add Compat class under `forge/` and register from `LMRBCompatForge`
 
 ### Configuration Structure
 
@@ -103,3 +103,9 @@ net.sistr.lmrbcompat/
 - Platform entry points: `fabric/src/main/java/net/sistr/lmrbcompat/fabric/LMRBCompatFabric.java`
 - Mod versions: `gradle.properties`
 - Mod metadata: `fabric/src/main/resources/fabric.mod.json`, `forge/src/main/resources/META-INF/mods.toml`
+
+## Environment Notes
+
+- WSL 環境では `runClient` が失敗する（アセットダウンロード不可）。Windows 側のリポジトリで実行すること
+- ブランチ切り替え後に `chmod +x gradlew` が必要な場合がある
+- Forge ビルドで `minecraft-merged-srg.jar` の `FileAlreadyExistsException` が出たらキャッシュを削除する
