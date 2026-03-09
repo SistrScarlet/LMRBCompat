@@ -1,7 +1,9 @@
 package net.sistr.lmrbcompat;
 
+import java.util.function.Supplier;
+import net.sistr.lmrbcompat.actionarms.ActionArmsCompat;
+import net.sistr.lmrbcompat.compat.AbstractCompat;
 import net.sistr.lmrbcompat.compat.CompatUtil;
-import net.sistr.lmrbcompat.reflection.ReflectionUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,15 +12,18 @@ public class LMRBCompat {
     public static final Logger LOGGER = LogManager.getLogger();
 
     public static void init() {
-        loadCompat("actionarms", "ActionArmsCompat");
+        loadCompat("actionarms", ActionArmsCompat::new);
     }
 
-    private static void loadCompat(String modId, String compatPath) {
-        String basePath = "net.sistr.lmrbcompat.";
+    public static void loadCompat(String modId, Supplier<AbstractCompat<?>> factory) {
         CompatUtil.ifLoaded(
                 modId,
-                id ->
-                        ReflectionUtil.execWithInstancing(
-                                basePath + modId + "." + compatPath, "init"));
+                id -> {
+                    try {
+                        factory.get().init();
+                    } catch (LinkageError e) {
+                        LOGGER.warn("Failed to load compat for {}: {}", modId, e.getMessage());
+                    }
+                });
     }
 }

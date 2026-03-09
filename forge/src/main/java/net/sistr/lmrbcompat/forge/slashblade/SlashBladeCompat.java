@@ -16,6 +16,12 @@ import net.sistr.lmrbcompat.reflection.ReflectionUtil;
 
 public class SlashBladeCompat extends AbstractCompat<SlashBladeConfig> {
     public static SlashBladeCompat INSTANCE;
+    private SlashBladeInputHandler inputHandler;
+
+    @FunctionalInterface
+    private interface SlashBladeInputHandler {
+        boolean slashInput(ItemStack stack, LivingEntity mob, boolean isR);
+    }
 
     public SlashBladeCompat() {
         super("slashblade", SlashBladeConfig.class);
@@ -24,6 +30,14 @@ public class SlashBladeCompat extends AbstractCompat<SlashBladeConfig> {
     public void init() {
         super.init();
         INSTANCE = this;
+
+        // 初期化時にバージョン判定し、適切なハンドラをキャッシュ
+        if (ReflectionUtil.isClassExist(
+                "mods.flammpfeil.slashblade.capability.slashblade.ComboState")) {
+            inputHandler = SlashBladeOriginal::slashInput;
+        } else {
+            inputHandler = SlashBladeResharped::slashInput;
+        }
         register(
                 "samurai",
                 ModeType.<SlashBladeMode>builder(
@@ -45,31 +59,8 @@ public class SlashBladeCompat extends AbstractCompat<SlashBladeConfig> {
         return "SlashBlade";
     }
 
-    public Boolean slashInput(ItemStack stack, LivingEntity mob, boolean isR) {
-        if (ReflectionUtil.isClassExist(
-                "mods.flammpfeil.slashblade.capability.slashblade.ComboState")) {
-            return ReflectionUtil.execStatic(
-                            "net.sistr.lmrbcompat.forge.slashblade.SlashBladeOriginal",
-                            "slashInput",
-                            ItemStack.class,
-                            LivingEntity.class,
-                            boolean.class)
-                    .map(o -> o.exec(stack, mob, isR).orElse(false))
-                    .filter(o -> o instanceof Boolean)
-                    .map(o -> (Boolean) o)
-                    .orElse(false);
-        } else {
-            return ReflectionUtil.execStatic(
-                            "net.sistr.lmrbcompat.forge.slashblade.SlashBladeResharped",
-                            "slashInput",
-                            ItemStack.class,
-                            LivingEntity.class,
-                            boolean.class)
-                    .map(o -> o.exec(stack, mob, isR).orElse(false))
-                    .filter(o -> o instanceof Boolean)
-                    .map(o -> (Boolean) o)
-                    .orElse(false);
-        }
+    public boolean slashInput(ItemStack stack, LivingEntity mob, boolean isR) {
+        return inputHandler.slashInput(stack, mob, isR);
     }
 
     /** Called from {@link MixinLittleMaidEntity} */

@@ -12,7 +12,10 @@ import net.sistr.lmrbcompat.LMRBCompat;
 import net.sistr.lmrbcompat.client.LMRBCompatClient;
 import net.sistr.lmrbcompat.client.config.ConfigScreenManager;
 import net.sistr.lmrbcompat.compat.CompatUtil;
-import net.sistr.lmrbcompat.reflection.ReflectionUtil;
+import net.sistr.lmrbcompat.forge.classicguns.ClassicGunsCompat;
+import net.sistr.lmrbcompat.forge.fn5728.FN5728Compat;
+import net.sistr.lmrbcompat.forge.gvclib.GVCLibCompat;
+import net.sistr.lmrbcompat.forge.slashblade.SlashBladeCompat;
 
 @Mod(LMRBCompat.MOD_ID)
 public class LMRBCompatForge {
@@ -39,20 +42,9 @@ public class LMRBCompatForge {
         CompatUtil.init(modIds);
         LMRBCompat.init();
 
-        // ハチャメチャなハードコードであるため、コードにエラーが出た場合でも無事起動できるようにする処置
-        // 多分リフレクションは無くても良いかも？
-        loadCompat("fn5728", "FN5728Compat");
-        loadCompat("classicguns", "ClassicGunsCompat");
-        loadCompat("gvclib", "GVCLibCompat");
-        loadCompat("slashblade", "SlashBladeCompat");
-    }
-
-    private void loadCompat(String modId, String compatPath) {
-        String basePath = "net.sistr.lmrbcompat.forge.";
-        CompatUtil.ifLoaded(
-                modId,
-                id ->
-                        ReflectionUtil.execWithInstancing(
-                                basePath + modId + "." + compatPath, "init"));
+        LMRBCompat.loadCompat("fn5728", FN5728Compat::new);
+        LMRBCompat.loadCompat("classicguns", ClassicGunsCompat::new);
+        LMRBCompat.loadCompat("gvclib", GVCLibCompat::new);
+        LMRBCompat.loadCompat("slashblade", SlashBladeCompat::new);
     }
 }

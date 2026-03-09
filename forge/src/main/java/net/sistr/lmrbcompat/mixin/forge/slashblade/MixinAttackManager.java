@@ -10,6 +10,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
+import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,6 +28,10 @@ public class MixinAttackManager {
             boolean forceHit,
             boolean resetHit,
             CallbackInfo ci) {
+        // メイドさん以外の攻撃は元のロジックに任せる
+        if (!(src.getAttacker() instanceof LittleMaidEntity)) {
+            return;
+        }
         if (!(target instanceof EntityAbstractSummonedSword)) {
             AttackManager.doManagedAttack(
                     (t) -> {
