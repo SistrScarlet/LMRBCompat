@@ -17,15 +17,18 @@ public class ActionArmsCompat extends AbstractCompat<ActionArmsConfig> {
     public void init() {
         super.init();
         INSTANCE = this;
-        register("shooter", ModeType
-                .<ShooterMode>builder((type, entity) -> new ShooterMode(type, "Shooter", entity))
-                .addItemMatcher(ItemMatchers.clazz(LeverActionGunItem.class), ItemMatcher.Priority.HIGH)
-                .build());
+        register(
+                "shooter",
+                ModeType.<ShooterMode>builder(
+                                (type, entity) -> new ShooterMode(type, "Shooter", entity))
+                        .addItemMatcher(
+                                ItemMatchers.clazz(LeverActionGunItem.class),
+                                ItemMatcher.Priority.HIGH)
+                        .build());
     }
 
     @Override
     public String getName() {
         return "actionarms";
     }
-
 }

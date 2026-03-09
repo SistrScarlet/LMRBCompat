@@ -15,9 +15,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MaidModelRenderer.class)
-public abstract class MixinMaidModelRenderer extends MobEntityRenderer<LittleMaidEntity, LMMultiModel<LittleMaidEntity>> {
+public abstract class MixinMaidModelRenderer
+        extends MobEntityRenderer<LittleMaidEntity, LMMultiModel<LittleMaidEntity>> {
 
-    public MixinMaidModelRenderer(EntityRendererFactory.Context arg, LMMultiModel<LittleMaidEntity> arg2, float f) {
+    public MixinMaidModelRenderer(
+            EntityRendererFactory.Context arg, LMMultiModel<LittleMaidEntity> arg2, float f) {
         super(arg, arg2, f);
     }
 
@@ -26,8 +28,7 @@ public abstract class MixinMaidModelRenderer extends MobEntityRenderer<LittleMai
         if (CompatUtil.isModLoaded("gvclib")) {
             ReflectionUtil.getConstructor(
                             "net.sistr.lmrbcompat.forge.gvclib.client.LMGunBaseFeatureRenderer",
-                            FeatureRendererContext.class
-                    )
+                            FeatureRendererContext.class)
                     .map((constructor) -> constructor.newInstance(this))
                     .flatMap(o -> o)
                     .filter(o -> o instanceof FeatureRenderer)
@@ -35,5 +36,4 @@ public abstract class MixinMaidModelRenderer extends MobEntityRenderer<LittleMai
                     .ifPresent(this::addFeature);
         }
     }
-
 }

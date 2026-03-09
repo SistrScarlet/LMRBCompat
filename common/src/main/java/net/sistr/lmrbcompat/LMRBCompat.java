@@ -15,9 +15,10 @@ public class LMRBCompat {
 
     private static void loadCompat(String modId, String compatPath) {
         String basePath = "net.sistr.lmrbcompat.";
-        CompatUtil.ifLoaded(modId,
-                id -> ReflectionUtil.execWithInstancing(
-                        basePath + modId + "." + compatPath,
-                        "init"));
+        CompatUtil.ifLoaded(
+                modId,
+                id ->
+                        ReflectionUtil.execWithInstancing(
+                                basePath + modId + "." + compatPath, "init"));
     }
 }

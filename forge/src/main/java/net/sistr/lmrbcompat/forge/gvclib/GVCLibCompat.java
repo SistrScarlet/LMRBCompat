@@ -17,10 +17,13 @@ public class GVCLibCompat extends AbstractCompat<GVCLibConfig> {
     public void init() {
         super.init();
         INSTANCE = this;
-        register("shooter", ModeType
-                .<ShooterMode>builder((type, entity) -> new ShooterMode(type, "Shooter", entity))
-                .addItemMatcher(ItemMatchers.clazz(ItemGunBase.class), ItemMatcher.Priority.HIGH)
-                .build());
+        register(
+                "shooter",
+                ModeType.<ShooterMode>builder(
+                                (type, entity) -> new ShooterMode(type, "Shooter", entity))
+                        .addItemMatcher(
+                                ItemMatchers.clazz(ItemGunBase.class), ItemMatcher.Priority.HIGH)
+                        .build());
     }
 
     @Override

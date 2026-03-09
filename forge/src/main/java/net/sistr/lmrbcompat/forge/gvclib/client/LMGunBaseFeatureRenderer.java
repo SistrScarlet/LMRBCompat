@@ -17,14 +17,26 @@ import net.sistr.littlemaidmodelloader.client.renderer.MultiModel;
 import net.sistr.littlemaidmodelloader.entity.compound.IHasMultiModel;
 import net.sistr.littlemaidmodelloader.multimodel.layer.MMMatrixStack;
 
-public class LMGunBaseFeatureRenderer<T extends LivingEntity & IHasMultiModel, M extends MultiModel<T>> extends FeatureRenderer<T, M> {
+public class LMGunBaseFeatureRenderer<
+                T extends LivingEntity & IHasMultiModel, M extends MultiModel<T>>
+        extends FeatureRenderer<T, M> {
 
     public LMGunBaseFeatureRenderer(FeatureRendererContext<T, M> context) {
         super(context);
     }
 
     @Override
-    public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, T entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
+    public void render(
+            MatrixStack matrices,
+            VertexConsumerProvider vertexConsumers,
+            int light,
+            T entity,
+            float limbAngle,
+            float limbDistance,
+            float tickDelta,
+            float animationProgress,
+            float headYaw,
+            float headPitch) {
         boolean mainRight = entity.getMainArm() == Arm.RIGHT;
         ItemStack leftStack = mainRight ? entity.getOffHandStack() : entity.getMainHandStack();
         ItemStack rightStack = mainRight ? entity.getMainHandStack() : entity.getOffHandStack();
@@ -42,7 +54,13 @@ public class LMGunBaseFeatureRenderer<T extends LivingEntity & IHasMultiModel, M
         }
     }
 
-    protected void renderArmWithItem(T entity, ItemStack stack, Arm arm, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+    protected void renderArmWithItem(
+            T entity,
+            ItemStack stack,
+            Arm arm,
+            MatrixStack matrices,
+            VertexConsumerProvider vertexConsumers,
+            int light) {
         if (!stack.isEmpty()) {
             matrices.push();
             if (entity.isInSneakingPose()) {
@@ -62,23 +80,38 @@ public class LMGunBaseFeatureRenderer<T extends LivingEntity & IHasMultiModel, M
                 gun.ModelLoad();
                 if (gun.obj_model != null) {
                     boolean isReload = false;
-                    MinecraftClient.getInstance().getEntityRenderDispatcher().textureManager.getTexture(Identifier.parse(gun.obj_tex));
-                    VertexConsumer vertexconsumer = vertexConsumers.getBuffer(RenderTypeGun.gunrender(Identifier.parse(gun.obj_tex)));
-                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat1", 255, 255, 255, light);
-                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat100", 255, 255, 255, light);
-                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat2", 255, 255, 255, light);
-                    if (!isReload)gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat3", 255, 255, 255, light);
-                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat20", 255, 255, 255, light);
-                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat21", 255, 255, 255, light);
-                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat22", 255, 255, 255, light);
-                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat25", 255, 255, 255, light);
-                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat31", 255, 255, 255, light);
-                    gun.obj_model.renderPartColor(vertexconsumer, matrices, "mat32", 255, 255, 255, light);
+                    MinecraftClient.getInstance()
+                            .getEntityRenderDispatcher()
+                            .textureManager
+                            .getTexture(Identifier.parse(gun.obj_tex));
+                    VertexConsumer vertexconsumer =
+                            vertexConsumers.getBuffer(
+                                    RenderTypeGun.gunrender(Identifier.parse(gun.obj_tex)));
+                    gun.obj_model.renderPartColor(
+                            vertexconsumer, matrices, "mat1", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(
+                            vertexconsumer, matrices, "mat100", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(
+                            vertexconsumer, matrices, "mat2", 255, 255, 255, light);
+                    if (!isReload)
+                        gun.obj_model.renderPartColor(
+                                vertexconsumer, matrices, "mat3", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(
+                            vertexconsumer, matrices, "mat20", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(
+                            vertexconsumer, matrices, "mat21", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(
+                            vertexconsumer, matrices, "mat22", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(
+                            vertexconsumer, matrices, "mat25", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(
+                            vertexconsumer, matrices, "mat31", 255, 255, 255, light);
+                    gun.obj_model.renderPartColor(
+                            vertexconsumer, matrices, "mat32", 255, 255, 255, light);
                 }
             }
 
             matrices.pop();
         }
-
     }
 }

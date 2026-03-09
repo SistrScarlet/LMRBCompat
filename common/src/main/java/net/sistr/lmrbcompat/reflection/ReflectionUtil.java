@@ -5,7 +5,8 @@ import java.util.Optional;
 
 public class ReflectionUtil {
 
-    public static Optional<Object> execWithInstancing(String className, String methodName, Object... args) {
+    public static Optional<Object> execWithInstancing(
+            String className, String methodName, Object... args) {
         try {
             var sampleClass = Class.forName(className);
             var instance = sampleClass.getConstructor().newInstance();
@@ -27,17 +28,19 @@ public class ReflectionUtil {
         return Optional.empty();
     }
 
-    public static Optional<IMethod> exec(Object instance, String methodName, Class<?>... parameterTypes) {
+    public static Optional<IMethod> exec(
+            Object instance, String methodName, Class<?>... parameterTypes) {
         try {
             var method = instance.getClass().getMethod(methodName, parameterTypes);
-            return Optional.of(args1 -> {
-                try {
-                    return Optional.ofNullable(method.invoke(instance, args1));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return Optional.empty();
-            });
+            return Optional.of(
+                    args1 -> {
+                        try {
+                            return Optional.ofNullable(method.invoke(instance, args1));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return Optional.empty();
+                    });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,7 +63,8 @@ public class ReflectionUtil {
         return Optional.empty();
     }
 
-    public static Optional<IMethod> execStatic(String className, String methodName, Class<?>... paramTypes) {
+    public static Optional<IMethod> execStatic(
+            String className, String methodName, Class<?>... paramTypes) {
         try {
             // クラスの取得
             Class<?> targetClass = Class.forName(className);
@@ -69,14 +73,15 @@ public class ReflectionUtil {
             Method method = targetClass.getMethod(methodName, paramTypes);
 
             // staticメソッドの呼び出し（第一引数にnullを指定）
-            return Optional.of(args -> {
-                try {
-                    return Optional.ofNullable(method.invoke(null, args));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return Optional.empty();
-            });
+            return Optional.of(
+                    args -> {
+                        try {
+                            return Optional.ofNullable(method.invoke(null, args));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return Optional.empty();
+                    });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,14 +96,15 @@ public class ReflectionUtil {
         try {
             var clazz = Class.forName(className);
             var constructor = clazz.getConstructor(paramTypes);
-            return Optional.of((args) -> {
-                try {
-                    return Optional.of(constructor.newInstance(args));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return Optional.empty();
-            });
+            return Optional.of(
+                    (args) -> {
+                        try {
+                            return Optional.of(constructor.newInstance(args));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        return Optional.empty();
+                    });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -155,5 +161,4 @@ public class ReflectionUtil {
             return false;
         }
     }
-
 }

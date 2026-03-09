@@ -1,6 +1,7 @@
 package net.sistr.lmrbcompat.forge.classicguns.mode;
 
 import classicguns.*;
+import java.util.Optional;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
@@ -15,8 +16,6 @@ import net.sistr.littlemaidrebirth.api.mode.ModeType;
 import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
 import net.sistr.lmrbcompat.forge.classicguns.ClassicGunsCompat;
 import net.sistr.lmrbcompat.mode.AbstractShooterMode;
-
-import java.util.Optional;
 
 public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
 
@@ -81,21 +80,34 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
 
     @Override
     protected void playReloadStartSound() {
-        this.maid.getWorld().playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                CGSoundEvent.getSound(weapon.reload_sound),
-                SoundCategory.NEUTRAL, 1.0F, 1.0F);
+        this.maid
+                .getWorld()
+                .playSound(
+                        null,
+                        this.maid.getX(),
+                        this.maid.getY(),
+                        this.maid.getZ(),
+                        CGSoundEvent.getSound(weapon.reload_sound),
+                        SoundCategory.NEUTRAL,
+                        1.0F,
+                        1.0F);
     }
 
     @Override
-    protected void playReloadEndSound() {
-
-    }
+    protected void playReloadEndSound() {}
 
     @Override
     protected void shootBullet() {
         World world = this.maid.getWorld();
-        world.playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                CGSoundEvent.getSound(weapon.fire_sound), SoundCategory.NEUTRAL, 3.0F, 1.0F);
+        world.playSound(
+                null,
+                this.maid.getX(),
+                this.maid.getY(),
+                this.maid.getZ(),
+                CGSoundEvent.getSound(weapon.fire_sound),
+                SoundCategory.NEUTRAL,
+                3.0F,
+                1.0F);
 
         for (int pe = 0; pe < weapon.pellet; ++pe) {
             CGEntityBullet bullet = new CGEntityBullet(world, this.maid);
@@ -118,7 +130,8 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
                 bbure = weapon.bureads;
             }
 
-            bullet.setVelocity(this.maid, this.maid.getPitch(), this.maid.getYaw(), 0.0F, weapon.speed, bbure);
+            bullet.setVelocity(
+                    this.maid, this.maid.getPitch(), this.maid.getYaw(), 0.0F, weapon.speed, bbure);
             if (!world.isClient) {
                 world.spawnEntity(bullet);
             }
@@ -156,18 +169,25 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
         zz11 += (double) MathHelper.cos(this.maid.headYaw * 0.017453292F) * zzz;
         xx11 -= MathHelper.sin(this.maid.headYaw * 0.017453292F + xz) * weapon.fire_posx;
         zz11 += MathHelper.cos(this.maid.headYaw * 0.017453292F + xz) * weapon.fire_posx;
-        yy11 = (double) MathHelper.sqrt((float) (zzz * zzz)) * Math.tan(Math.toRadians(-this.maid.getPitch())) * 1.0;
-        world.addParticle(ParticleTypes.SMOKE,
-                this.maid.getX() + xx11, this.maid.getY() + yy + yy11, this.maid.getZ() + zz11,
-                0.0, 0.1, 0.0);
+        yy11 =
+                (double) MathHelper.sqrt((float) (zzz * zzz))
+                        * Math.tan(Math.toRadians(-this.maid.getPitch()))
+                        * 1.0;
+        world.addParticle(
+                ParticleTypes.SMOKE,
+                this.maid.getX() + xx11,
+                this.maid.getY() + yy + yy11,
+                this.maid.getZ() + zz11,
+                0.0,
+                0.1,
+                0.0);
 
-        this.weaponStack.damage(1, this.maid, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
+        this.weaponStack.damage(
+                1, this.maid, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
     }
 
     @Override
-    protected void shootEffect() {
-
-    }
+    protected void shootEffect() {}
 
     @Override
     protected int getShootIntervalLength() {
@@ -176,9 +196,17 @@ public class ShooterMode extends AbstractShooterMode<CGItemGunBase> {
 
     @Override
     protected void playShootSound() {
-        this.maid.getWorld().playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                CGSoundEvent.getSound(weapon.fire_sound),
-                SoundCategory.NEUTRAL, 1.0F, 1.0F);
+        this.maid
+                .getWorld()
+                .playSound(
+                        null,
+                        this.maid.getX(),
+                        this.maid.getY(),
+                        this.maid.getZ(),
+                        CGSoundEvent.getSound(weapon.fire_sound),
+                        SoundCategory.NEUTRAL,
+                        1.0F,
+                        1.0F);
     }
 
     @Override

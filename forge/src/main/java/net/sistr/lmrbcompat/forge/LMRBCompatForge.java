@@ -2,7 +2,6 @@ package net.sistr.lmrbcompat.forge;
 
 import dev.architectury.platform.forge.EventBuses;
 import net.minecraftforge.client.ConfigScreenHandler;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -26,16 +25,17 @@ public class LMRBCompatForge {
             LMRBCompatClient.initClient();
         }
 
-        context.registerExtensionPoint(ConfigScreenHandler.ConfigScreenFactory.class,
-                () -> new ConfigScreenHandler.ConfigScreenFactory(
-                        (client, parent) -> ConfigScreenManager.getINSTANCE().getConfigScreen(parent)));
+        context.registerExtensionPoint(
+                ConfigScreenHandler.ConfigScreenFactory.class,
+                () ->
+                        new ConfigScreenHandler.ConfigScreenFactory(
+                                (client, parent) ->
+                                        ConfigScreenManager.getINSTANCE().getConfigScreen(parent)));
     }
 
     public void onCommonSetup(FMLCommonSetupEvent event) {
-        var modIds = FMLLoader.getLoadingModList().getMods()
-                .stream()
-                .map(ModInfo::getModId)
-                .toList();
+        var modIds =
+                FMLLoader.getLoadingModList().getMods().stream().map(ModInfo::getModId).toList();
         CompatUtil.init(modIds);
         LMRBCompat.init();
 
@@ -49,9 +49,10 @@ public class LMRBCompatForge {
 
     private void loadCompat(String modId, String compatPath) {
         String basePath = "net.sistr.lmrbcompat.forge.";
-        CompatUtil.ifLoaded(modId,
-                id -> ReflectionUtil.execWithInstancing(
-                        basePath + modId + "." + compatPath,
-                        "init"));
+        CompatUtil.ifLoaded(
+                modId,
+                id ->
+                        ReflectionUtil.execWithInstancing(
+                                basePath + modId + "." + compatPath, "init"));
     }
 }

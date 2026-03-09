@@ -17,10 +17,14 @@ public class ClassicGunsCompat extends AbstractCompat<ClassicGunsConfig> {
     public void init() {
         super.init();
         INSTANCE = this;
-        register("shooter", ModeType
-                .<ShooterMode>builder((type, entity) -> new ShooterMode(type, "Shooter", entity))
-                .addItemMatcher(ItemMatchers.clazz(CGItemGunBase.class), ItemMatcher.Priority.NORMAL)
-                .build());
+        register(
+                "shooter",
+                ModeType.<ShooterMode>builder(
+                                (type, entity) -> new ShooterMode(type, "Shooter", entity))
+                        .addItemMatcher(
+                                ItemMatchers.clazz(CGItemGunBase.class),
+                                ItemMatcher.Priority.NORMAL)
+                        .build());
     }
 
     @Override

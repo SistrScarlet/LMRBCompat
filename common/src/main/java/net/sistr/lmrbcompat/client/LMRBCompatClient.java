@@ -6,8 +6,5 @@ import net.fabricmc.api.Environment;
 @Environment(EnvType.CLIENT)
 public class LMRBCompatClient {
 
-    public static void initClient() {
-
-    }
-
+    public static void initClient() {}
 }

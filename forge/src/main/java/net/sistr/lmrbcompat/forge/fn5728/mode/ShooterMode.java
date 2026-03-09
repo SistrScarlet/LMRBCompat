@@ -4,6 +4,7 @@ import fn5728.IFN_EntitySS190;
 import fn5728.IFN_ItemFN5728;
 import fn5728.IFN_SoundEvent;
 import fn5728.mod_IFN_FN5728Guns;
+import java.util.Optional;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.EquipmentSlot;
@@ -17,8 +18,6 @@ import net.sistr.littlemaidrebirth.api.mode.ModeType;
 import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
 import net.sistr.lmrbcompat.forge.fn5728.FN5728Compat;
 import net.sistr.lmrbcompat.mode.AbstractShooterMode;
-
-import java.util.Optional;
 
 public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
 
@@ -83,16 +82,32 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
 
     @Override
     protected void playReloadStartSound() {
-        this.maid.getWorld().playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                IFN_SoundEvent.getSound(weapon.release_sound),
-                SoundCategory.NEUTRAL, 1.0F, 1.0F);
+        this.maid
+                .getWorld()
+                .playSound(
+                        null,
+                        this.maid.getX(),
+                        this.maid.getY(),
+                        this.maid.getZ(),
+                        IFN_SoundEvent.getSound(weapon.release_sound),
+                        SoundCategory.NEUTRAL,
+                        1.0F,
+                        1.0F);
     }
 
     @Override
     protected void playReloadEndSound() {
-        this.maid.getWorld().playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                IFN_SoundEvent.getSound(weapon.reload_sound),
-                SoundCategory.NEUTRAL, 1.0F, 1.0F);
+        this.maid
+                .getWorld()
+                .playSound(
+                        null,
+                        this.maid.getX(),
+                        this.maid.getY(),
+                        this.maid.getZ(),
+                        IFN_SoundEvent.getSound(weapon.reload_sound),
+                        SoundCategory.NEUTRAL,
+                        1.0F,
+                        1.0F);
     }
 
     @Override
@@ -117,19 +132,23 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
             if (this.maid.isInSneakingPose()) {
                 bbure = gun.bureads;
             }
-            bulletEntity.setVelocity(this.maid,
+            bulletEntity.setVelocity(
+                    this.maid,
                     this.maid.getPitch() + (this.maid.getRandom().nextFloat() * 2 - 1) * 5,
                     this.maid.getYaw() + (this.maid.getRandom().nextFloat() * 2 - 1) * 5,
-                    0.0F, gun.speed, bbure);
+                    0.0F,
+                    gun.speed,
+                    bbure);
             if (!world.isClient()) world.spawnEntity(bulletEntity);
         }
 
-        this.weaponStack.damage(1, this.maid, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
+        this.weaponStack.damage(
+                1, this.maid, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
     }
 
     @Override
     protected void shootEffect() {
-        //パーティクル
+        // パーティクル
         double xx11 = 0;
         double zz11 = 0;
         double yy11 = 0;
@@ -153,12 +172,20 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
         zz11 += MathHelper.cos(this.maid.getHeadYaw() * rad) * zzz;
         xx11 -= MathHelper.sin(this.maid.getHeadYaw() * rad + xz) * weapon.fire_posx;
         zz11 += MathHelper.cos(this.maid.getHeadYaw() * rad + xz) * weapon.fire_posx;
-        yy11 = MathHelper.sqrt((float) (zzz * zzz)) * Math.tan(Math.toRadians(-this.maid.getPitch())) * 1D;
-        this.maid.getWorld().addParticle(ParticleTypes.SMOKE,
-                this.maid.getX() + xx11,
-                this.maid.getY() + yy + yy11,
-                this.maid.getZ() + zz11,
-                0.0D, 0.1D, 0.0D);
+        yy11 =
+                MathHelper.sqrt((float) (zzz * zzz))
+                        * Math.tan(Math.toRadians(-this.maid.getPitch()))
+                        * 1D;
+        this.maid
+                .getWorld()
+                .addParticle(
+                        ParticleTypes.SMOKE,
+                        this.maid.getX() + xx11,
+                        this.maid.getY() + yy + yy11,
+                        this.maid.getZ() + zz11,
+                        0.0D,
+                        0.1D,
+                        0.0D);
     }
 
     @Override
@@ -168,9 +195,17 @@ public class ShooterMode extends AbstractShooterMode<IFN_ItemFN5728> {
 
     @Override
     protected void playShootSound() {
-        this.maid.getWorld().playSound(null, this.maid.getX(), this.maid.getY(), this.maid.getZ(),
-                IFN_SoundEvent.getSound(weapon.fire_sound),
-                SoundCategory.NEUTRAL, 1.0F, 1.0F);
+        this.maid
+                .getWorld()
+                .playSound(
+                        null,
+                        this.maid.getX(),
+                        this.maid.getY(),
+                        this.maid.getZ(),
+                        IFN_SoundEvent.getSound(weapon.fire_sound),
+                        SoundCategory.NEUTRAL,
+                        1.0F,
+                        1.0F);
     }
 
     @Override

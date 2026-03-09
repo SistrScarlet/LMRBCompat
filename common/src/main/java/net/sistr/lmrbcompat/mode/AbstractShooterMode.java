@@ -1,5 +1,6 @@
 package net.sistr.lmrbcompat.mode;
 
+import java.util.Optional;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
@@ -11,8 +12,6 @@ import net.sistr.littlemaidrebirth.api.mode.ModeType;
 import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
 import net.sistr.littlemaidrebirth.entity.mode.AbstractArcherMode;
 
-import java.util.Optional;
-
 public abstract class AbstractShooterMode<T extends Item> extends AbstractArcherMode<T> {
     protected final LittleMaidEntity maid;
     protected ItemStack weaponStack;
@@ -21,7 +20,8 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
     protected int shootInterval;
     protected int inSightTime;
 
-    public AbstractShooterMode(ModeType<? extends AbstractShooterMode> modeType, String name, LittleMaidEntity maid) {
+    public AbstractShooterMode(
+            ModeType<? extends AbstractShooterMode> modeType, String name, LittleMaidEntity maid) {
         super(modeType, name, maid);
         this.maid = maid;
     }
@@ -45,9 +45,9 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
         return reloadTime > 0 || super.shouldContinueExecuting();
     }
 
-    abstract protected boolean isWeaponItem(ItemStack stack);
+    protected abstract boolean isWeaponItem(ItemStack stack);
 
-    abstract protected Optional<T> getWeaponInstance(ItemStack stack);
+    protected abstract Optional<T> getWeaponInstance(ItemStack stack);
 
     @Override
     public void startExecuting() {
@@ -58,7 +58,7 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
         this.mob.swingHand(Hand.MAIN_HAND);
     }
 
-    abstract protected boolean isFullAuto();
+    protected abstract boolean isFullAuto();
 
     @Override
     public void tick() {
@@ -73,15 +73,15 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
         super.tick();
     }
 
-    abstract protected boolean shouldReload();
+    protected abstract boolean shouldReload();
 
     protected boolean hasAmmo() {
-        //弾がオフハンドにある
+        // 弾がオフハンドにある
         if (isAmmo(this.maid.getOffHandStack())) {
             return true;
         }
 
-        //弾がインベントリにある
+        // 弾がインベントリにある
         var inventory = this.maid.getInventory();
         for (int i = 0; i < inventory.size(); i++) {
             var slot = inventory.getStack(i);
@@ -92,26 +92,26 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
         return false;
     }
 
-    abstract protected boolean isAmmo(ItemStack stack);
+    protected abstract boolean isAmmo(ItemStack stack);
 
     protected void reloading() {
-        //リロード開始処理
+        // リロード開始処理
         if (this.reloadTime++ <= 0) {
             playReloadStartSound();
             this.maid.swingHand(Hand.MAIN_HAND);
             return;
         }
 
-        //リロードが終わっていないなら終了
+        // リロードが終わっていないなら終了
         if (this.reloadTime < getReloadLength()) {
             return;
         }
         this.reloadTime = 0;
 
-        //リロード完了処理
+        // リロード完了処理
         playReloadEndSound();
 
-        //無限なら弾消費無しで完了(本来は1発以上持ってないとダメだが面倒なので…)
+        // 無限なら弾消費無しで完了(本来は1発以上持ってないとダメだが面倒なので…)
         if (isInfinity()) {
             setAmmoAmount(getMaxAmmoAmount());
             return;
@@ -121,19 +121,19 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
     }
 
     protected void consumeAmmo() {
-        //オフハンドにある弾を込める
+        // オフハンドにある弾を込める
         if (isMagazineReload()) {
             final int maxAmmo = getMaxAmmoAmount();
             var off = this.maid.getOffHandStack();
             if (!off.isEmpty() && isAmmo(off)) {
                 int amount = off.getCount();
                 if (amount > 0) {
-                    //リロード後、弾アイテムがゼロになる場合
+                    // リロード後、弾アイテムがゼロになる場合
                     if (amount == 1) {
                         off.setCount(0);
                         this.maid.equipStack(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
                         setAmmoAmount(maxAmmo);
-                    } else {//弾アイテムが残る場合
+                    } else { // 弾アイテムが残る場合
                         off.decrement(1);
                         setAmmoAmount(maxAmmo);
                     }
@@ -141,7 +141,7 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
                 }
             }
 
-            //インベントリにある弾を込める
+            // インベントリにある弾を込める
             var inv = this.maid.getInventory();
             int size = inv.size();
             for (int i = 0; i < size; i++) {
@@ -150,12 +150,12 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
                 if (slot.isEmpty() || !isAmmo(slot) || amount <= 0) {
                     continue;
                 }
-                //リロード後、弾アイテムがゼロになる場合
+                // リロード後、弾アイテムがゼロになる場合
                 if (amount == 1) {
                     slot.setCount(0);
                     inv.setStack(i, ItemStack.EMPTY);
                     setAmmoAmount(maxAmmo);
-                } else {//弾アイテムが残る場合
+                } else { // 弾アイテムが残る場合
                     slot.decrement(1);
                     setAmmoAmount(maxAmmo);
                 }
@@ -168,19 +168,19 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
             if (!off.isEmpty() && isAmmo(off)) {
                 int amount = off.getCount();
                 if (amount > 0) {
-                    //リロード後、弾アイテムがゼロになる場合
+                    // リロード後、弾アイテムがゼロになる場合
                     if (amount <= maxAmmo - remain) {
                         off.decrement(0);
                         this.maid.equipStack(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
                         remain += amount;
-                    } else {//弾アイテムが残る場合
+                    } else { // 弾アイテムが残る場合
                         off.decrement(maxAmmo - remain);
                         remain = maxAmmo;
                     }
                 }
             }
 
-            //インベントリにある弾を込める
+            // インベントリにある弾を込める
             var inv = this.maid.getInventory();
             int size = inv.size();
             for (int i = 0; i < size; i++) {
@@ -192,12 +192,12 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
                 if (slot.isEmpty() || !isAmmo(slot) || amount <= 0) {
                     continue;
                 }
-                //リロード後、弾アイテムがゼロになる場合
+                // リロード後、弾アイテムがゼロになる場合
                 if (amount <= maxAmmo - remain) {
                     slot.decrement(0);
                     inv.setStack(i, ItemStack.EMPTY);
                     remain += amount;
-                } else {//弾アイテムが残る場合
+                } else { // 弾アイテムが残る場合
                     slot.decrement(maxAmmo - remain);
                     remain = maxAmmo;
                 }
@@ -207,38 +207,45 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
         }
     }
 
-    abstract protected boolean isMagazineReload();
+    protected abstract boolean isMagazineReload();
 
-    abstract protected int getReloadLength();
+    protected abstract int getReloadLength();
 
-    abstract protected boolean isInfinity();
+    protected abstract boolean isInfinity();
 
-    abstract protected int getMaxAmmoAmount();
+    protected abstract int getMaxAmmoAmount();
 
-    abstract protected int getAmmoAmount();
+    protected abstract int getAmmoAmount();
 
-    abstract protected void setAmmoAmount(int amount);
+    protected abstract void setAmmoAmount(int amount);
 
-    abstract protected void playReloadStartSound();
+    protected abstract void playReloadStartSound();
 
-    abstract protected void playReloadEndSound();
+    protected abstract void playReloadEndSound();
 
     @Override
-    protected void tickRangedAttack(LivingEntity target, ItemStack stack,
-                                    boolean canSee, double distanceSq, float maxRange) {
+    protected void tickRangedAttack(
+            LivingEntity target,
+            ItemStack stack,
+            boolean canSee,
+            double distanceSq,
+            float maxRange) {
         if (canSee) {
             inSightTime++;
         } else {
             inSightTime = 0;
         }
 
-        //視界に入れてすぐ、リロード中、射程外、または射線が通らない場合は撃たない
+        // 視界に入れてすぐ、リロード中、射程外、または射線が通らない場合は撃たない
         if (inSightTime < 10 || shouldReload() || distanceSq >= maxRange * maxRange) {
             return;
         }
 
-        var result = this.raycastShootLine(target, maxRange,
-                (e) -> e instanceof LivingEntity living && this.mob.isFriend(living));
+        var result =
+                this.raycastShootLine(
+                        target,
+                        maxRange,
+                        (e) -> e instanceof LivingEntity living && this.mob.isFriend(living));
 
         if (result.isPresent() && result.get().getType() != HitResult.Type.MISS) {
             return;
@@ -252,14 +259,14 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
             this.maid.swingHand(Hand.MAIN_HAND);
         }
 
-        //射撃処理
+        // 射撃処理
 
         playShootSound();
 
         shootBullet();
         shootEffect();
 
-        //撃ち切ったタイミングで敵が消滅した場合もリロードするためここでリロード開始
+        // 撃ち切ったタイミングで敵が消滅した場合もリロードするためここでリロード開始
         if (shouldReload() && hasAmmo()) {
             this.reloadTime++;
             playReloadStartSound();
@@ -267,13 +274,13 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
         }
     }
 
-    abstract protected void shootBullet();
+    protected abstract void shootBullet();
 
-    abstract protected void shootEffect();
+    protected abstract void shootEffect();
 
-    abstract protected int getShootIntervalLength();
+    protected abstract int getShootIntervalLength();
 
-    abstract protected void playShootSound();
+    protected abstract void playShootSound();
 
     @Override
     public void resetTask() {
@@ -281,5 +288,4 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
         inSightTime = 0;
         reloadTime = 0;
     }
-
 }

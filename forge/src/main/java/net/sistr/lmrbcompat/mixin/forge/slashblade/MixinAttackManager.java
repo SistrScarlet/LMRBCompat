@@ -20,51 +20,84 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinAttackManager {
 
     @Inject(method = "doAttackWith", at = @At("HEAD"), cancellable = true)
-    private static void onDoAttackWith(DamageSource src, float amount, Entity target, boolean forceHit, boolean resetHit, CallbackInfo ci) {
+    private static void onDoAttackWith(
+            DamageSource src,
+            float amount,
+            Entity target,
+            boolean forceHit,
+            boolean resetHit,
+            CallbackInfo ci) {
         if (!(target instanceof EntityAbstractSummonedSword)) {
-            AttackManager.doManagedAttack((t) -> {
-                var attacker = (LivingEntity) src.getAttacker();
-                assert attacker != null;
-                var mainHandStack = attacker.getMainHandStack();
-                var opt = mainHandStack.getCapability(ItemSlashBlade.BLADESTATE);
-                if (!opt.isPresent()) {
-                    return;
-                }
-                mainHandStack.getCapability(ItemSlashBlade.BLADESTATE).ifPresent((state) -> {
-                    IConcentrationRank.ConcentrationRanks rankBonus
-                            = attacker.getCapability(ConcentrationRankCapabilityProvider.RANK_POINT)
-                            .map((rp) -> rp.getRank(attacker.getEntityWorld().getTime()))
-                            .orElse(IConcentrationRank.ConcentrationRanks.NONE);
-                    EntityAttributeModifier am = LMRBCompat$getEntityAttributeModifier(rankBonus);
-
-                    try {
-                        state.setOnClick(true);
-                        attacker.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).addTemporaryModifier(am);
-                        // アタック部分をプレイヤーのものから置き換え
-                        if (t.damage(src, amount)) {
-                            if (target instanceof LivingEntity livingTarget) {
-                                var slashBladeItem = (ItemSlashBlade) mainHandStack.getItem();
-                                slashBladeItem.postHit(mainHandStack, livingTarget, attacker);
-                            }
+            AttackManager.doManagedAttack(
+                    (t) -> {
+                        var attacker = (LivingEntity) src.getAttacker();
+                        assert attacker != null;
+                        var mainHandStack = attacker.getMainHandStack();
+                        var opt = mainHandStack.getCapability(ItemSlashBlade.BLADESTATE);
+                        if (!opt.isPresent()) {
+                            return;
                         }
-                    } finally {
-                        attacker.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).removeModifier(am);
-                        state.setOnClick(false);
-                        ci.cancel();
-                    }
-                });
-            }, target, forceHit, resetHit);
+                        mainHandStack
+                                .getCapability(ItemSlashBlade.BLADESTATE)
+                                .ifPresent(
+                                        (state) -> {
+                                            IConcentrationRank.ConcentrationRanks rankBonus =
+                                                    attacker.getCapability(
+                                                                    ConcentrationRankCapabilityProvider
+                                                                            .RANK_POINT)
+                                                            .map(
+                                                                    (rp) ->
+                                                                            rp.getRank(
+                                                                                    attacker.getEntityWorld()
+                                                                                            .getTime()))
+                                                            .orElse(
+                                                                    IConcentrationRank
+                                                                            .ConcentrationRanks
+                                                                            .NONE);
+                                            EntityAttributeModifier am =
+                                                    LMRBCompat$getEntityAttributeModifier(
+                                                            rankBonus);
+
+                                            try {
+                                                state.setOnClick(true);
+                                                attacker.getAttributeInstance(
+                                                                EntityAttributes
+                                                                        .GENERIC_ATTACK_DAMAGE)
+                                                        .addTemporaryModifier(am);
+                                                // アタック部分をプレイヤーのものから置き換え
+                                                if (t.damage(src, amount)) {
+                                                    if (target
+                                                            instanceof LivingEntity livingTarget) {
+                                                        var slashBladeItem =
+                                                                (ItemSlashBlade)
+                                                                        mainHandStack.getItem();
+                                                        slashBladeItem.postHit(
+                                                                mainHandStack,
+                                                                livingTarget,
+                                                                attacker);
+                                                    }
+                                                }
+                                            } finally {
+                                                attacker.getAttributeInstance(
+                                                                EntityAttributes
+                                                                        .GENERIC_ATTACK_DAMAGE)
+                                                        .removeModifier(am);
+                                                state.setOnClick(false);
+                                                ci.cancel();
+                                            }
+                                        });
+                    },
+                    target,
+                    forceHit,
+                    resetHit);
         }
     }
 
     @Unique
-    private static EntityAttributeModifier LMRBCompat$getEntityAttributeModifier(IConcentrationRank.ConcentrationRanks rankBonus) {
+    private static EntityAttributeModifier LMRBCompat$getEntityAttributeModifier(
+            IConcentrationRank.ConcentrationRanks rankBonus) {
         float modifiedRatio = (float) rankBonus.level / 2.0F;
         return new EntityAttributeModifier(
-                "RankDamageBonus",
-                modifiedRatio,
-                EntityAttributeModifier.Operation.ADDITION
-        );
+                "RankDamageBonus", modifiedRatio, EntityAttributeModifier.Operation.ADDITION);
     }
-
 }

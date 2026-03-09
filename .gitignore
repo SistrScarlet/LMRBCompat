@@ -115,3 +115,6 @@ run/
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
 /fabric/mods_runtime/
+.claude/tools/
+.claude/agent-memory-local/
+.claude/settings.local.json

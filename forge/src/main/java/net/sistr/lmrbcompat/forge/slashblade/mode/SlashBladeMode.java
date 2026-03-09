@@ -1,5 +1,6 @@
 package net.sistr.lmrbcompat.forge.slashblade.mode;
 
+import java.util.Optional;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.item.ItemStack;
@@ -12,8 +13,6 @@ import net.sistr.littlemaidrebirth.api.mode.ModeType;
 import net.sistr.littlemaidrebirth.entity.mode.AbstractFencerMode;
 import net.sistr.lmrbcompat.forge.slashblade.SlashBladeCompat;
 
-import java.util.Optional;
-
 public class SlashBladeMode extends AbstractFencerMode<ItemStack> {
     private boolean enableStep = false;
     private int attackCool;
@@ -25,9 +24,7 @@ public class SlashBladeMode extends AbstractFencerMode<ItemStack> {
 
     @Override
     protected Optional<ItemStack> getWeaponInstance(ItemStack stack) {
-        return stack.getItem() instanceof ItemSlashBlade
-                ? Optional.of(stack)
-                : Optional.empty();
+        return stack.getItem() instanceof ItemSlashBlade ? Optional.of(stack) : Optional.empty();
     }
 
     @Override

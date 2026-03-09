@@ -27,10 +27,13 @@ public abstract class AbstractCompat<T extends ConfigData> {
 
         var uniqueID = getUniqueID();
 
-        ConfigScreenManager.getINSTANCE().register(uniqueID,
-                ConfigScreenInfo.of("LMRBCompat " + getName(),
-                        "configHub.button." + uniqueID,
-                        screen -> AutoConfig.getConfigScreen(configClass, screen).get()));
+        ConfigScreenManager.getINSTANCE()
+                .register(
+                        uniqueID,
+                        ConfigScreenInfo.of(
+                                "LMRBCompat " + getName(),
+                                "configHub.button." + uniqueID,
+                                screen -> AutoConfig.getConfigScreen(configClass, screen).get()));
     }
 
     protected void register(String id, ModeType<?> modeType) {
@@ -50,5 +53,4 @@ public abstract class AbstractCompat<T extends ConfigData> {
     }
 
     public abstract String getName();
-
 }

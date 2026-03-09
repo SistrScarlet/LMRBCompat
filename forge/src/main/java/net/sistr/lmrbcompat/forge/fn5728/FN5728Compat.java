@@ -17,16 +17,21 @@ public class FN5728Compat extends AbstractCompat<FN5728Config> {
     public void init() {
         super.init();
         INSTANCE = this;
-        register("shooter", ModeType
-                .<ShooterMode>builder((type, entity) -> new ShooterMode(type, "Shooter", entity))
-                .addItemMatcher(ItemMatchers.item(mod_IFN_FN5728Guns.item_fiveseven.get()), ItemMatcher.Priority.HIGH)
-                .addItemMatcher(ItemMatchers.item(mod_IFN_FN5728Guns.item_p90.get()), ItemMatcher.Priority.HIGH)
-                .build());
+        register(
+                "shooter",
+                ModeType.<ShooterMode>builder(
+                                (type, entity) -> new ShooterMode(type, "Shooter", entity))
+                        .addItemMatcher(
+                                ItemMatchers.item(mod_IFN_FN5728Guns.item_fiveseven.get()),
+                                ItemMatcher.Priority.HIGH)
+                        .addItemMatcher(
+                                ItemMatchers.item(mod_IFN_FN5728Guns.item_p90.get()),
+                                ItemMatcher.Priority.HIGH)
+                        .build());
     }
 
     @Override
     public String getName() {
         return "fn5728";
     }
-
 }

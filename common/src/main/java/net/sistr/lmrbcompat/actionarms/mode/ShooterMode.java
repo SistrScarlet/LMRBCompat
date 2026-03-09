@@ -1,5 +1,8 @@
 package net.sistr.lmrbcompat.actionarms.mode;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -18,10 +21,6 @@ import net.sistr.littlemaidrebirth.api.mode.ModeType;
 import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
 import net.sistr.littlemaidrebirth.entity.mode.AbstractArcherMode;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 public class ShooterMode extends AbstractArcherMode<LeverActionGunItem> {
     private final GunController gunController;
     private final IKeyInputManager keyInputManager;
@@ -30,15 +29,17 @@ public class ShooterMode extends AbstractArcherMode<LeverActionGunItem> {
     private final double maxAimDegreesCos = Math.cos(Math.toRadians(15));
     private int zanshin;
 
-    public ShooterMode(ModeType<? extends AbstractArcherMode> modeType, String name, LittleMaidEntity mob) {
+    public ShooterMode(
+            ModeType<? extends AbstractArcherMode> modeType, String name, LittleMaidEntity mob) {
         super(modeType, name, mob);
         this.keyInputManager = new KeyInputManager();
-        this.gunController = new GunController(mob, keyInputManager, () -> getItems(mob.getInventory())) {
-            @Override
-            protected Optional<Inventory> getInventory() {
-                return Optional.of(mob.getInventory());
-            }
-        };
+        this.gunController =
+                new GunController(mob, keyInputManager, () -> getItems(mob.getInventory())) {
+                    @Override
+                    protected Optional<Inventory> getInventory() {
+                        return Optional.of(mob.getInventory());
+                    }
+                };
     }
 
     @Override
@@ -68,15 +69,17 @@ public class ShooterMode extends AbstractArcherMode<LeverActionGunItem> {
 
     @Override
     public void tick() {
-        this.component = IItemComponent.query(this.weapon.getGunComponent(), this.weaponStack, c -> c);
+        this.component =
+                IItemComponent.query(this.weapon.getGunComponent(), this.weaponStack, c -> c);
 
-        Reloadable.ReloadStartContext reloadStartContext = (predicate) ->
-                InventoryAmmoUtil.hasBullet(this.mob.getInventory(), predicate);
+        Reloadable.ReloadStartContext reloadStartContext =
+                (predicate) -> InventoryAmmoUtil.hasBullet(this.mob.getInventory(), predicate);
 
         // 弾が無くなったら終了
         if (!this.component.getChamber().canShoot()
                 && this.component.getMagazine().isEmpty()
-                && !reloadStartContext.hasBullet(this.component.getMagazine().getMagazineType().allowBullet())) {
+                && !reloadStartContext.hasBullet(
+                        this.component.getMagazine().getMagazineType().allowBullet())) {
             resetTask();
         }
 
@@ -86,7 +89,8 @@ public class ShooterMode extends AbstractArcherMode<LeverActionGunItem> {
         // リロードすべきじゃないならリロード状態を解除
         var target = this.mob.getTarget();
         boolean targetAlive = target != null && target.isAlive();
-        boolean required = !this.component.getChamber().canShoot() && this.component.getMagazine().isEmpty();
+        boolean required =
+                !this.component.getChamber().canShoot() && this.component.getMagazine().isEmpty();
         boolean shouldReload = this.component.shouldReload();
         boolean reloading = !cycling && shouldReload && (!targetAlive || required);
 
@@ -100,17 +104,19 @@ public class ShooterMode extends AbstractArcherMode<LeverActionGunItem> {
         boolean shouldInput = this.mob.age % 5 == 0;
 
         // サイクルすべきならサイクル操作
-        boolean cycle = shouldInput
-                && cycling
-                && component.canCycle()
-                && !this.keyInputManager.isPressPrev(KeyInputManager.Key.COCK, 1);
+        boolean cycle =
+                shouldInput
+                        && cycling
+                        && component.canCycle()
+                        && !this.keyInputManager.isPressPrev(KeyInputManager.Key.COCK, 1);
         this.keyInputManager.input(KeyInputManager.Key.COCK, cycle);
 
         // リロードすべきならリロード操作
-        boolean reload = shouldInput
-                && reloading
-                && this.component.canReload(reloadStartContext)
-                && !this.keyInputManager.isPressPrev(KeyInputManager.Key.RELOAD, 1);
+        boolean reload =
+                shouldInput
+                        && reloading
+                        && this.component.canReload(reloadStartContext)
+                        && !this.keyInputManager.isPressPrev(KeyInputManager.Key.RELOAD, 1);
         this.keyInputManager.input(KeyInputManager.Key.RELOAD, reload);
 
         // 射撃操作は後で上書きする
@@ -124,7 +130,8 @@ public class ShooterMode extends AbstractArcherMode<LeverActionGunItem> {
 
         this.gunController.tick();
 
-        this.component = IItemComponent.query(this.weapon.getGunComponent(), this.weaponStack, c -> c);
+        this.component =
+                IItemComponent.query(this.weapon.getGunComponent(), this.weaponStack, c -> c);
 
         if (canShoot && !this.component.getChamber().canShoot()) {
             this.mob.play(LMSounds.SHOOT);
@@ -132,8 +139,12 @@ public class ShooterMode extends AbstractArcherMode<LeverActionGunItem> {
     }
 
     @Override
-    protected void tickRangedAttack(LivingEntity target, ItemStack stack,
-                                    boolean canSee, double distanceSq, float maxRange) {
+    protected void tickRangedAttack(
+            LivingEntity target,
+            ItemStack stack,
+            boolean canSee,
+            double distanceSq,
+            float maxRange) {
         if (canSee) {
             inSightTime++;
         } else {
@@ -166,8 +177,11 @@ public class ShooterMode extends AbstractArcherMode<LeverActionGunItem> {
         }
 
         // 射線チェック
-        var result = this.raycastShootLine(target, maxRange,
-                (e) -> e instanceof LivingEntity living && this.mob.isFriend(living));
+        var result =
+                this.raycastShootLine(
+                        target,
+                        maxRange,
+                        (e) -> e instanceof LivingEntity living && this.mob.isFriend(living));
 
         // 射線上に味方がいる場合はreturn
         if (result.isPresent() && result.get().getType() != HitResult.Type.MISS) {

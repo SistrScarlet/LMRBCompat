@@ -17,5 +17,4 @@ public abstract class MixinLittleMaidEntity {
             SlashBladeCompat.tickLittleMaid((LittleMaidEntity) (Object) this);
         }
     }
-
 }

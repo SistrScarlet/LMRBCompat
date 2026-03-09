@@ -1,5 +1,7 @@
 package net.sistr.lmrbcompat.forge.slashblade;
 
+import static mods.flammpfeil.slashblade.item.ItemSlashBlade.BLADESTATE;
+
 import mods.flammpfeil.slashblade.capability.slashblade.ISlashBladeState;
 import mods.flammpfeil.slashblade.item.ItemSlashBlade;
 import net.minecraft.entity.LivingEntity;
@@ -12,8 +14,6 @@ import net.sistr.lmrbcompat.forge.slashblade.mode.SlashBladeMode;
 import net.sistr.lmrbcompat.mixin.forge.slashblade.MixinLittleMaidEntity;
 import net.sistr.lmrbcompat.reflection.ReflectionUtil;
 
-import static mods.flammpfeil.slashblade.item.ItemSlashBlade.BLADESTATE;
-
 public class SlashBladeCompat extends AbstractCompat<SlashBladeConfig> {
     public static SlashBladeCompat INSTANCE;
 
@@ -24,20 +24,20 @@ public class SlashBladeCompat extends AbstractCompat<SlashBladeConfig> {
     public void init() {
         super.init();
         INSTANCE = this;
-        register("samurai", ModeType
-                .<SlashBladeMode>builder((type, entity) ->
-                        new SlashBladeMode(entity, type, "Samurai"))
-                .addItemMatcher(
-                        (stack) -> stack.getItem() instanceof ItemSlashBlade
-                                && !isBroken(stack),
-                        ItemMatcher.Priority.HIGH)
-                .build());
+        register(
+                "samurai",
+                ModeType.<SlashBladeMode>builder(
+                                (type, entity) -> new SlashBladeMode(entity, type, "Samurai"))
+                        .addItemMatcher(
+                                (stack) ->
+                                        stack.getItem() instanceof ItemSlashBlade
+                                                && !isBroken(stack),
+                                ItemMatcher.Priority.HIGH)
+                        .build());
     }
 
     private boolean isBroken(ItemStack stack) {
-        return stack.getCapability(BLADESTATE)
-                .map(ISlashBladeState::isBroken)
-                .orElse(false);
+        return stack.getCapability(BLADESTATE).map(ISlashBladeState::isBroken).orElse(false);
     }
 
     @Override
@@ -46,11 +46,14 @@ public class SlashBladeCompat extends AbstractCompat<SlashBladeConfig> {
     }
 
     public Boolean slashInput(ItemStack stack, LivingEntity mob, boolean isR) {
-        if (ReflectionUtil.isClassExist("mods.flammpfeil.slashblade.capability.slashblade.ComboState")) {
+        if (ReflectionUtil.isClassExist(
+                "mods.flammpfeil.slashblade.capability.slashblade.ComboState")) {
             return ReflectionUtil.execStatic(
                             "net.sistr.lmrbcompat.forge.slashblade.SlashBladeOriginal",
                             "slashInput",
-                            ItemStack.class, LivingEntity.class, boolean.class)
+                            ItemStack.class,
+                            LivingEntity.class,
+                            boolean.class)
                     .map(o -> o.exec(stack, mob, isR).orElse(false))
                     .filter(o -> o instanceof Boolean)
                     .map(o -> (Boolean) o)
@@ -59,7 +62,9 @@ public class SlashBladeCompat extends AbstractCompat<SlashBladeConfig> {
             return ReflectionUtil.execStatic(
                             "net.sistr.lmrbcompat.forge.slashblade.SlashBladeResharped",
                             "slashInput",
-                            ItemStack.class, LivingEntity.class, boolean.class)
+                            ItemStack.class,
+                            LivingEntity.class,
+                            boolean.class)
                     .map(o -> o.exec(stack, mob, isR).orElse(false))
                     .filter(o -> o instanceof Boolean)
                     .map(o -> (Boolean) o)
@@ -67,9 +72,7 @@ public class SlashBladeCompat extends AbstractCompat<SlashBladeConfig> {
         }
     }
 
-    /**
-     * Called from {@link MixinLittleMaidEntity}
-     */
+    /** Called from {@link MixinLittleMaidEntity} */
     public static void tickLittleMaid(LittleMaidEntity maid) {
         var inv = maid.getInventory();
         for (int i = 0; i < inv.size(); i++) {

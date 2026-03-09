@@ -1,7 +1,6 @@
 package net.sistr.lmrbcompat.compat;
 
 import com.google.common.collect.ImmutableSet;
-
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -22,5 +21,4 @@ public class CompatUtil {
             exec.accept(modId);
         }
     }
-
 }
