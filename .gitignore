@@ -118,3 +118,10 @@ run/
 .claude/tools/
 .claude/agent-memory-local/
 .claude/settings.local.json
+
+# Eclipse
+.classpath
+.project
+.settings/
+.factorypath
+**/bin/
