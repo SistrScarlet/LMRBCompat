@@ -11,6 +11,7 @@ import net.sistr.littlemaidmodelloader.resource.util.LMSounds;
 import net.sistr.littlemaidrebirth.api.mode.ModeType;
 import net.sistr.littlemaidrebirth.entity.LittleMaidEntity;
 import net.sistr.littlemaidrebirth.entity.mode.AbstractArcherMode;
+import net.sistr.littlemaidrebirth.entity.util.TameableUtil;
 
 public abstract class AbstractShooterMode<T extends Item> extends AbstractArcherMode<T> {
     protected final LittleMaidEntity maid;
@@ -245,7 +246,9 @@ public abstract class AbstractShooterMode<T extends Item> extends AbstractArcher
                 this.raycastShootLine(
                         target,
                         maxRange,
-                        (e) -> e instanceof LivingEntity living && this.mob.isFriend(living));
+                        (e) ->
+                                e instanceof LivingEntity living
+                                        && TameableUtil.isFriend(this.mob, living));
 
         if (result.isPresent() && result.get().getType() != HitResult.Type.MISS) {
             return;
