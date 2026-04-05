@@ -104,6 +104,12 @@ net.sistr.lmrbcompat/
 - Mod versions: `gradle.properties`
 - Mod metadata: `fabric/src/main/resources/fabric.mod.json`, `forge/src/main/resources/META-INF/mods.toml`
 
+## Cross-Environment Workflow
+
+- WSL2 から Windows リポジトリへローカルremote経由で転送可能
+- `git remote add local /mnt/v/Develop/Minecraft/LMRBCompat`
+- Windows側でチェックアウト中のブランチにはpush不可。別ブランチ名にpush: `git push local 1.20.1:wsl/{branch-name}`
+
 ## Environment Notes
 
 - WSL 環境では `runClient` が失敗する（アセットダウンロード不可）。Windows 側のリポジトリで実行すること
