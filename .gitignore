@@ -5,13 +5,6 @@
 *.ipr
 *.iws
 
-# Eclipse
-.classpath
-.project
-.settings/
-.factorypath
-bin/
-
 # IntelliJ
 out/
 # mpeltonen/sbt-idea plugin

@@ -1,6 +1,6 @@
 package net.sistr.lmrbcompat.actionarms;
 
-import net.sistr.actionarms.item.GunItem;
+import net.sistr.actionarms.item.LeverActionGunItem;
 import net.sistr.littlemaidrebirth.api.mode.ItemMatcher;
 import net.sistr.littlemaidrebirth.api.mode.ItemMatchers;
 import net.sistr.littlemaidrebirth.api.mode.ModeType;
@@ -22,7 +22,8 @@ public class ActionArmsCompat extends AbstractCompat<ActionArmsConfig> {
                 ModeType.<ShooterMode>builder(
                                 (type, entity) -> new ShooterMode(type, "Shooter", entity))
                         .addItemMatcher(
-                                ItemMatchers.clazz(GunItem.class), ItemMatcher.Priority.HIGH)
+                                ItemMatchers.clazz(LeverActionGunItem.class),
+                                ItemMatcher.Priority.HIGH)
                         .build());
     }
 
