@@ -1,5 +1,7 @@
 package net.sistr.lmrbcompat.compat;
 
+import dev.architectury.platform.Platform;
+import dev.architectury.utils.Env;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.ConfigHolder;
@@ -8,8 +10,7 @@ import net.minecraft.util.Identifier;
 import net.sistr.littlemaidrebirth.api.mode.ModeManager;
 import net.sistr.littlemaidrebirth.api.mode.ModeType;
 import net.sistr.lmrbcompat.LMRBCompat;
-import net.sistr.lmrbcompat.client.config.ConfigScreenInfo;
-import net.sistr.lmrbcompat.client.config.ConfigScreenManager;
+import net.sistr.lmrbcompat.client.config.ConfigScreenRegistrar;
 
 public abstract class AbstractCompat<T extends ConfigData> {
     protected final String compatId;
@@ -25,15 +26,11 @@ public abstract class AbstractCompat<T extends ConfigData> {
         AutoConfig.register(configClass, GsonConfigSerializer::new);
         CONFIG_HOLDER = AutoConfig.getConfigHolder(configClass);
 
-        var uniqueID = getUniqueID();
-
-        ConfigScreenManager.getINSTANCE()
-                .register(
-                        uniqueID,
-                        ConfigScreenInfo.of(
-                                "LMRBCompat " + getName(),
-                                "configHub.button." + uniqueID,
-                                screen -> AutoConfig.getConfigScreen(configClass, screen).get()));
+        // 設定画面の登録は Screen を参照するため、専用サーバーでロードしないようクライアント環境でのみ行う。
+        // ConfigScreenRegistrar へ隔離することで、このメソッド本体から Screen 参照ラムダを排除している。
+        if (Platform.getEnvironment() == Env.CLIENT) {
+            ConfigScreenRegistrar.register(getUniqueID(), getName(), configClass);
+        }
     }
 
     protected void register(String id, ModeType<?> modeType) {

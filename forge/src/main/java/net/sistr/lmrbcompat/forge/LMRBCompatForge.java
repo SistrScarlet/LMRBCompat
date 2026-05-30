@@ -26,14 +26,17 @@ public class LMRBCompatForge {
 
         if (FMLEnvironment.dist.isClient()) {
             LMRBCompatClient.initClient();
-        }
 
-        context.registerExtensionPoint(
-                ConfigScreenHandler.ConfigScreenFactory.class,
-                () ->
-                        new ConfigScreenHandler.ConfigScreenFactory(
-                                (client, parent) ->
-                                        ConfigScreenManager.getINSTANCE().getConfigScreen(parent)));
+            // ConfigScreenHandler はクライアント専用クラスのため、専用サーバーで参照しないよう
+            // クライアント環境でのみ登録する。
+            context.registerExtensionPoint(
+                    ConfigScreenHandler.ConfigScreenFactory.class,
+                    () ->
+                            new ConfigScreenHandler.ConfigScreenFactory(
+                                    (client, parent) ->
+                                            ConfigScreenManager.getINSTANCE()
+                                                    .getConfigScreen(parent)));
+        }
     }
 
     public void onCommonSetup(FMLCommonSetupEvent event) {
